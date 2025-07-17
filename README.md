@@ -1,7 +1,7 @@
 # datashelf
 Track versions of datasets as they evolve over time.
 
-🧊 datashelf: Lightweight Dataset Versioning Tool
+datashelf: Lightweight Dataset Versioning Tool
 Goal: Track versions of datasets as they evolve over time — even across projects.
 
 **Key Concepts:**
