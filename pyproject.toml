@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "datashelf"
+version = "0.1.0"
+description = "A git-like version control system for datasets"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Rohan Krishnan", email = "your.email@example.com"} 
+]
+keywords = ["data", "version-control", "datasets", "pandas", "git"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Version Control",
+]
+dependencies = [
+    "pandas>=1.0.0",
+    "pyyaml>=5.0.0",
+    "numpy>=1.18.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0.0",
+    "pytest-cov>=2.0.0",
+    "black>=21.0.0",
+    "flake8>=3.8.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/r0hankrishnan/datashelf"  
+Repository = "https://github.com/r0hankrishnan/datashelf"  
+Issues = "https://github.com/r0hankrishnan/datashelf/issues"  
+
+[tool.setuptools]
+packages = ["datashelf"]
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]

@@ -1,0 +1,21 @@
+config:
+- date_created: '2025-07-21 19:49:35'
+  number_of_collections: 2
+  collections:
+  - sales_analysis_2024
+  - customer_analytics
+collections:
+- collection_name: sales_analysis_2024
+  date_created: '2025-07-21 19:49:53'
+  date_last_modified: '2025-07-21 19:50:21'
+  files:
+  - sales_analysis_2024_metadata.yaml
+  - quarterly_sales
+  - quarterly_sales
+  - sales_summary
+- collection_name: customer_analytics
+  date_created: '2025-07-21 19:50:36'
+  date_last_modified: '2025-07-21 19:50:48'
+  files:
+  - customer_analytics_metadata.yaml
+  - customer_profiles

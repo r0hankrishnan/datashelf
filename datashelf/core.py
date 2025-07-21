@@ -5,48 +5,66 @@ from datashelf.utils.shelf import _make_datashelf_metadata_structure, \
     _update_datashelf_metadata_with_added_collection, _update_datashelf_metadata_with_added_file_in_collection
 from datashelf.utils.collection import _make_collection_metadata_structure, \
     _add_file_to_collection_metadata, _update_config_metadata
-
 from datashelf.utils.hashing import _hash_pandas_df
 import pandas as pd
-import numpy as np
-from pathlib import Path
-import hashlib
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 if not logger.hasHandlers():
     logging.basicConfig(format = "%(asctime)s - %(levelname)s - %(message)s")
     
-def init():
-    """
-    Initiates a .datashelf directory in current working directory if it isn't already created. 
-    After creating the .datashelf directory, init() creates a `datashelf_metadata.yaml` YAML file
-    to store metadata about the collections the user creates.
+def init(set_dir:str = None):
+    """_summary_
+
+    Args:
+        set_dir (str, optional): _description_. Defaults to None.
+
+    Returns:
+        _type_: _description_
     """
     
-    # Warning message about running init() in the right directory
-    while True:
-        cont = input("It is recommended that you init datashelf in your project's root directory.\nPlease check that you are in the correct directory before continuing.\nContinue (y/n)?")
-        if cont.lower().strip() in ["yes", "y"]:
-            break
-        elif cont.lower().strip() in ["no", "n"]:
-            return None
-
-    # Check current directory for .datashelf and create if DNE
-    if os.path.isdir('.datashelf') and os.path.exists(os.path.join(os.getcwd(), '.datashelf', 'datashelf_metadata.yaml')):
-        return logger.info(".datashelf directory and metadata already initalized.")
-    else:
-        os.makedirs('.datashelf', exist_ok = True)
+    # If user sets a specific path for .datashelf
+    if set_dir:
+        if os.path.isdir(os.path.join(set_dir, '.datashelf')) and os.path.exists(os.path.join(set_dir, '.datashelf', 'datashelf_metadata.yaml')):
+            return logger.info(".datashelf directory and metadata already initalized.")
+        else:
+            os.makedirs(os.path.join(set_dir, '.datashelf'), exist_ok = True)
         
         # Should define and add in basic config data to YAML here
-        try:
-            _make_datashelf_metadata_structure()
+            try:
+                _make_datashelf_metadata_structure()
             
-        except Exception as e:
-            logger.error(f"An error occurred: {e}")
-            raise
+            except Exception as e:
+                logger.error(f"An error occurred: {e}")
+                raise
         
-        return logger.info(".datashelf directory and metadata initialized")
+            return logger.info(".datashelf directory and metadata initialized")
+    
+    # If no set path, initialize .datashelf in cwd
+    else:
+        # Warning message about running init() in the right directory
+        while True:
+            cont = input("It is recommended that you init datashelf in your project's root directory.\nPlease check that you are in the correct directory before continuing.\nContinue (y/n)?")
+            if cont.lower().strip() in ["yes", "y"]:
+                break
+            elif cont.lower().strip() in ["no", "n"]:
+                return None
+
+        # Check current directory for .datashelf and create if DNE
+        if os.path.isdir('.datashelf') and os.path.exists(os.path.join(os.getcwd(), '.datashelf', 'datashelf_metadata.yaml')):
+            return logger.info(".datashelf directory and metadata already initalized.")
+        else:
+            os.makedirs('.datashelf', exist_ok = True)
+            
+            # Should define and add in basic config data to YAML here
+            try:
+                _make_datashelf_metadata_structure()
+                
+            except Exception as e:
+                logger.error(f"An error occurred: {e}")
+                raise
+            
+            return logger.info(".datashelf directory and metadata initialized")
 
 def create_collection(collection_name:str):
     """
