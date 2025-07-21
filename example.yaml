@@ -1,0 +1,19 @@
+config:
+- date_created: "01/01/01 12:00:00"
+  number_of_collections: 3
+
+collections:
+- collection_name": "Collection 1"
+  date_created": "01/01/01 12:00:00"
+  date_last_modified: "01/01/01 12:00:00"
+  files: ["collection_1_metadata.yaml", "file1.csv", "file2.csv"]
+  
+- collection_name: "Collection 2"
+  date_created: "01/02/01 12:00:00"
+  date_last_modified: "01/02/01 12:00:00"
+  files: ["collection_2_metadata.yaml", "file1.csv", "file2.csv"]
+
+- collection_name: "Collection 3"
+  date_created: "01/03/01 12:00:00"
+  date_last_modified: "01/03/01 12:00:00"
+  files: ["collection_3_metadata.yaml", "file1.csv", "file2.csv"]
