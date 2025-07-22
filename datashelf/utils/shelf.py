@@ -1,11 +1,9 @@
 import os
 import logging
 from datashelf.utils.tools import _get_collection_files, _find_datashelf_root
+from datashelf.utils.logging import setup_logger
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-if not logger.hasHandlers():
-    logging.basicConfig(format = "%(asctime)s - %(levelname)s - %(message)s")
+logger = setup_logger(__name__)
 
 def _make_datashelf_metadata_structure():
     import yaml

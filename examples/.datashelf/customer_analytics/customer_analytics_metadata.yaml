@@ -1,21 +1,21 @@
 config:
 - collection_name: customer_analytics
-  date_created: '2025-07-21 19:50:36'
+  date_created: '2025-07-21 20:32:44'
   number_of_files: 2
   most_recent_commit: /Users/rohankrishnan/Documents/GitHub/datashelf/examples/.datashelf/customer_analytics/customer_profiles_raw.csv
-  date_last_modified: '2025-07-21 19:50:48'
+  date_last_modified: '2025-07-21 20:32:44'
 files:
 - name: customer_analytics_metadata.yaml
   hash: ''
-  date_created: '2025-07-21 19:50:36'
+  date_created: '2025-07-21 20:32:44'
   date_last_modified: ''
   tag: ''
   version: null
   message: ''
 - name: customer_profiles
   hash: d3f7697565b459ac447f2783fb25efd42e6a13e346219e90145eed84472c5d1c
-  date_created: '2025-07-21 19:50:48'
-  date_last_modified: '2025-07-21 19:50:48'
+  date_created: '2025-07-21 20:32:44'
+  date_last_modified: '2025-07-21 20:32:44'
   tag: raw
   version: null
   message: Initial customer profile data from CRM

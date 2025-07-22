@@ -1,35 +1,35 @@
 config:
 - collection_name: sales_analysis_2024
-  date_created: '2025-07-21 19:49:53'
+  date_created: '2025-07-21 20:32:44'
   number_of_files: 4
   most_recent_commit: /Users/rohankrishnan/Documents/GitHub/datashelf/examples/.datashelf/sales_analysis_2024/sales_summary_final.csv
-  date_last_modified: '2025-07-21 19:50:21'
+  date_last_modified: '2025-07-21 20:32:44'
 files:
 - name: sales_analysis_2024_metadata.yaml
   hash: ''
-  date_created: '2025-07-21 19:49:53'
+  date_created: '2025-07-21 20:32:44'
   date_last_modified: ''
   tag: ''
   version: null
   message: ''
 - name: quarterly_sales
   hash: 276aff861de54b01d75e7b8522ef1b6a6c67bfe037574fa5f9d72ab2c39a4448
-  date_created: '2025-07-21 19:50:09'
-  date_last_modified: '2025-07-21 19:50:09'
+  date_created: '2025-07-21 20:32:44'
+  date_last_modified: '2025-07-21 20:32:44'
   tag: raw
   version: null
   message: Initial quarterly sales data from database
 - name: quarterly_sales
   hash: 89104c39df3a484e6b9d784f88597580058b7c746ecabbbef3fe51b6944153d8
-  date_created: '2025-07-21 19:50:16'
-  date_last_modified: '2025-07-21 19:50:16'
+  date_created: '2025-07-21 20:32:44'
+  date_last_modified: '2025-07-21 20:32:44'
   tag: enriched
   version: null
   message: Added revenue calculations and per-unit metrics
 - name: sales_summary
   hash: ca232d72f83e78a169ed4ff564aa99790e5014389167e4241371a2a77c19e920
-  date_created: '2025-07-21 19:50:21'
-  date_last_modified: '2025-07-21 19:50:21'
+  date_created: '2025-07-21 20:32:44'
+  date_last_modified: '2025-07-21 20:32:44'
   tag: final
   version: null
   message: Final summary statistics for quarterly report
