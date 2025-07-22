@@ -37,18 +37,18 @@ datashelf create-collection sales_analysis
 ### Using Python API
 
 ```python
-from datashelf.core import init, create_collection, save
+import datashelf.core as ds
 import pandas as pd
 
 # Initialize datashelf in your project
-init()
+ds.init()
 
 # Create a collection for your datasets
-create_collection("sales_analysis")
+ds.create_collection("sales_analysis")
 
 # Save a dataset version
 df = pd.DataFrame({"product": ["A", "B"], "sales": [100, 200]})
-save(df, 
+ds.save(df, 
      collection_name="sales_analysis", 
      name="raw_sales", 
      tag="raw", 
@@ -114,6 +114,14 @@ This project is in early development. If you're interested in contributing or ha
 ## Roadmap
 
 The following are changes that are planned for the next release of DataShelf:
+
+- [ ] Basic code improvements
+     - [ ] Refactor core.py to make main functions simpler and pull out nested logic into helper functions
+          - [x] init
+          - [ ] create_collection
+          - [ ] save
+          - [ ] load
+          - [ ] list
 
 - [ ] Tagging system improvememnts
      - [ ] Implement default tag list with validation in save()
