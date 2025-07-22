@@ -43,7 +43,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "datashelf=datashelf.core:main",  # Optional CLI entry point
+            "datashelf=datashelf.cli:main",  
         ],
     },
 )
