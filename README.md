@@ -1,30 +1,8 @@
-# DataShelf
-```                                   
-           _____          _           _____  _            _   __ 
-          |  __ \        | |         / ____|| |          | | / _|
-(\__/)    | |  | |  __ _ | |_  __ _ | (___  | |__    ___ | || |_
-(•ㅅ•)     | |  | | / _` || __|/ _` | \___ \ | '_ \  / _ \| ||  _|
-/ づ■づ    | |__| || (_| || |_| (_| | ____) || | | ||  __/| || |  
-          |_____/  \__,_| \__|\__,_||_____/ |_| |_| \___||_||_|  
-```
-```                                                                                                                                                         
-DDDDDDDDDDDDD                                 tttt                               SSSSSSSSSSSSSSS hhhhhhh                                lllllll    ffffffffffffffff  
-D::::::::::::DDD                           ttt:::t                             SS:::::::::::::::Sh:::::h                                l:::::l   f::::::::::::::::f 
-D:::::::::::::::DD                         t:::::t                            S:::::SSSSSS::::::Sh:::::h                                l:::::l  f::::::::::::::::::f
-DDD:::::DDDDD:::::D                        t:::::t                            S:::::S     SSSSSSSh:::::h                                l:::::l  f::::::fffffff:::::f
-  D:::::D    D:::::D  aaaaaaaaaaaaa  ttttttt:::::ttttttt      aaaaaaaaaaaaa   S:::::S             h::::h hhhhh           eeeeeeeeeeee    l::::l  f:::::f       ffffff
-  D:::::D     D:::::D a::::::::::::a t:::::::::::::::::t      a::::::::::::a  S:::::S             h::::hh:::::hhh      ee::::::::::::ee  l::::l  f:::::f             
-  D:::::D     D:::::D aaaaaaaaa:::::at:::::::::::::::::t      aaaaaaaaa:::::a  S::::SSSS          h::::::::::::::hh   e::::::eeeee:::::eel::::l f:::::::ffffff       
-  D:::::D     D:::::D          a::::atttttt:::::::tttttt               a::::a   SS::::::SSSSS     h:::::::hhh::::::h e::::::e     e:::::el::::l f::::::::::::f       
-  D:::::D     D:::::D   aaaaaaa:::::a      t:::::t              aaaaaaa:::::a     SSS::::::::SS   h::::::h   h::::::he:::::::eeeee::::::el::::l f::::::::::::f       
-  D:::::D     D:::::D aa::::::::::::a      t:::::t            aa::::::::::::a        SSSSSS::::S  h:::::h     h:::::he:::::::::::::::::e l::::l f:::::::ffffff       
-  D:::::D     D:::::Da::::aaaa::::::a      t:::::t           a::::aaaa::::::a             S:::::S h:::::h     h:::::he::::::eeeeeeeeeee  l::::l  f:::::f             
-  D:::::D    D:::::Da::::a    a:::::a      t:::::t    tttttta::::a    a:::::a             S:::::S h:::::h     h:::::he:::::::e           l::::l  f:::::f             
-DDD:::::DDDDD:::::D a::::a    a:::::a      t::::::tttt:::::ta::::a    a:::::a SSSSSSS     S:::::S h:::::h     h:::::he::::::::e         l::::::lf:::::::f            
-D:::::::::::::::DD  a:::::aaaa::::::a      tt::::::::::::::ta:::::aaaa::::::a S::::::SSSSSS:::::S h:::::h     h:::::h e::::::::eeeeeeee l::::::lf:::::::f            
-D::::::::::::DDD     a::::::::::aa:::a       tt:::::::::::tt a::::::::::aa:::aS:::::::::::::::SS  h:::::h     h:::::h  ee:::::::::::::e l::::::lf:::::::f            
-DDDDDDDDDDDDD         aaaaaaaaaa  aaaa         ttttttttttt    aaaaaaaaaa  aaaa SSSSSSSSSSSSSSS    hhhhhhh     hhhhhhh    eeeeeeeeeeeeee llllllllfffffffff 
-```
+# DataShelf   
+(\__/)
+(•ㅅ•)
+/ づ■づ
+
 A git-like version control system for datasets.
 
 ## Overview
