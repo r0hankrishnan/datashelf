@@ -1,9 +1,9 @@
 # DataShelf   
-(\__/)
+ (\__/)
 
-(•ㅅ•)
+ (•ㅅ•)
 
-/ づ■づ
+ / づ■づ
 
 A git-like version control system for datasets.
 
