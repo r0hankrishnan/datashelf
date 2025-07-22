@@ -23,6 +23,19 @@ DataShelf helps data scientists and analysts track how their datasets evolve ove
 
 ## Quick Start
 
+### Using the CLI
+```bash
+# Initialize datashelf in your project
+datashelf init
+
+# Or initialize in a specific directory
+datashelf init --path /path/to/project
+
+# Create a collection for your datasets
+datashelf create-collection sales_analysis
+```
+### Using Python API
+
 ```python
 from datashelf.core import init, create_collection, save
 import pandas as pd
