@@ -1,5 +1,4 @@
 import os
-import logging
 from datashelf.utils.tools import _find_datashelf_root, _get_collection_files
 from datashelf.utils.shelf import _make_datashelf_metadata_structure, \
     _update_datashelf_metadata_with_added_collection, _update_datashelf_metadata_with_added_file_in_collection
