@@ -23,9 +23,24 @@ def init(set_dir:str = None):
         _type_: _description_
     """
     
+    ## These top level if statements should probably be turned into helper functions for readibility
+    
     # If user sets a specific path for .datashelf
     if set_dir:
-        if os.path.isdir(os.path.join(set_dir, '.datashelf')) and os.path.exists(os.path.join(set_dir, '.datashelf', 'datashelf_metadata.yaml')):
+        # Make sure user isn't trying to create .datashelf in a subdirectory of current dir
+        current_dir = os.path.abspath(os.getcwd())
+        target_dir = os.path.abspath(set_dir)
+        
+        # Check if target_dir is a subdirectory of current_dir
+        if target_dir.startswith(current_dir + os.sep):
+            raise ValueError(
+                f"Cannot initialize datashelf in a subdirectory ({target_dir}). "
+                f"Datashelf should be initialized at or above the current directory "
+                f"to ensure it can be found from all project files. "
+                f"Consider running init() without set_dir, or use a parent directory."
+            )
+            
+        elif os.path.isdir(os.path.join(set_dir, '.datashelf')) and os.path.exists(os.path.join(set_dir, '.datashelf', 'datashelf_metadata.yaml')):
             return logger.info(".datashelf directory and metadata already initalized.")
         else:
             os.makedirs(os.path.join(set_dir, '.datashelf'), exist_ok = True)
