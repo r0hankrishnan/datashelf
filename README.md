@@ -110,3 +110,36 @@ pip install -e ".[dev]"
 ## Contributing
 
 This project is in early development. If you're interested in contributing or have feedback, please open an issue.
+
+## Roadmap
+
+The following are changes that are planned for the next release of DataShelf:
+
+- [ ] Refactor core entities into classes
+     - [ ] Datashelf class
+     - [ ] Collection class
+     - [ ] DatasetVersion class
+- [ ] Tagging system improvememnts
+     - [ ] Implement default tag list with validation in save()
+     - [ ] Allow tag default override
+     - [ ] Update naming convention to combine name and tag
+- [ ] Complete version management features
+     - [ ] List all versions of a data set
+          - [ ] Display in a nice table
+     - [ ] Load a specific dataset
+     - [ ] Create auto-versioning mechanic
+     - [ ] Allow parent-child relationships
+- [ ] Refactor metadata
+     - [ ] Rename 'config' keys in YAML to 'metadata'
+     - [ ] Ensure consistent metadata tracking for all DataShelf functions
+- [ ] Update helper functions
+     - [ ] Integrate into class-based design
+     - [ ] Add more error handling
+- [ ] Expand CLI integration
+     - [ ] Add save, ls, and load to CLI commands
+     - [ ] Allow for tag filtering in CLI
+     - [ ] Update CLI styling
+- [ ] Add a diff functionality to show simple comparisons between two datasets
+- [ ] Support other data storage formats
+     - [ ] Intelligently store data based on data size
+- [ ] Build visualization helpers to show collection history and tag stats
