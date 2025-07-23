@@ -45,6 +45,7 @@ def create_collection(collection_name:str):
     Raises:
         NotADirectoryError: If the function cannot find a .datashelf directory in the file tree, it will raise an error and prompt you to initialize a new datashelf before trying to create a collection.
     """
+    
     datashelf_path = _find_datashelf_root(return_datashelf_path = True)
     
     # Check that datashelf has been initialized
@@ -87,7 +88,14 @@ def create_collection(collection_name:str):
         
         #UPDATE DATASHELF METADATA HERE
         return logger.info(f"collection directory: {collection_name} and metadata file {metadata_filename} created.")
-        
+
+def _create_only_collection_metadata():
+    ...
+
+def _create_collection_dir_and_metadata():
+    ...
+
+
 def save(df:pd.DataFrame, collection_name:str, name:str, tag:str, message:str):
     """Take in a pd.DataFrame, save it as a pickle or csv (not sure which yet, maybe based on size) and 
     store file name + metadata in log file and update last_modified field in overall metadata
