@@ -1,6 +1,7 @@
 import os
 from datashelf.utils.tools import _find_datashelf_root
 from datashelf.utils.shelf import _update_datashelf_metadata_with_added_collection
+from datashelf.utils.collection import _make_collection_metadata_structure
 from datashelf.utils.logging import setup_logger
 import pandas as pd
 
