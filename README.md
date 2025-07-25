@@ -2,11 +2,11 @@
 
 ![DataShelf logo and tagline](./assets/DataShelf-no-bg.svg)
 
-A git-like version control system for datasets.
+A simple local data versioning library.
 
 ## Overview
 
-DataShelf helps data scientists and analysts track how their datasets evolve over time. Similar to how git tracks code changes, DataShelf tracks dataset versions with metadata, tags, and commit messages.
+DataShelf helps data scientists and analysts track how their datasets evolve over time. Similar to how git tracks code changes, DataShelf tracks dataset versions with metadata, tags, and commit messages with a simple, easy-to-remember syntax.
 
 ## Key Features
 
@@ -29,9 +29,6 @@ DataShelf helps data scientists and analysts track how their datasets evolve ove
 ```bash
 # Initialize datashelf in your project
 datashelf init
-
-# Or initialize in a specific directory
-datashelf init --path /path/to/project
 
 # Create a collection for your datasets
 datashelf create-collection sales_analysis
