@@ -1,45 +1,11 @@
 import os
-import logging
+import yaml
+from datetime import datetime
 from datashelf.utils.tools import _find_datashelf_root
 from datashelf.utils.logging import setup_logger
 from typing import Literal
 
 logger = setup_logger(__name__)
-
-    
-def _make_collection_metadata_structure(collection_name:str):
-    import yaml
-    from datetime import datetime
-    
-    collection_path = os.path.join(_find_datashelf_root(return_datashelf_path = True), collection_name.lower().replace(" ", "_"))
-    collection_metadata_path = os.path.join(collection_path, f'{collection_name.lower().replace(" ", "_")}_metadata.yaml')
-    current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    # Read metadata file
-    with open(collection_metadata_path, 'r') as f:
-        data = yaml.safe_load(f)
-        
-    if not data:
-        files = os.listdir(collection_path)
-        number_of_files = len(files)
-        
-        new_metadata = {}
-        new_metadata['config'] = [{'collection_name': collection_name.lower().replace(" ", "_"),
-                          'date_created': current_timestamp,
-                          'number_of_files': number_of_files,
-                          'most_recent_commit': ""
-                          }]
-        new_metadata['files'] = [{'name': files[0],
-                                  'hash':"",
-                                  'date_created': current_timestamp,
-                                  'date_last_modified':"",
-                                  'tag':"",
-                                  'version':None,
-                                  'message':""
-                                  }]
-        
-        with open(collection_metadata_path, 'w') as f:
-            yaml.safe_dump(new_metadata, f, sort_keys = False)
 
 # Should rework this function to directly take in the data that is loaded in _get_collection_files
 # that way, we don't have to open the metadata file twice to get the same info.

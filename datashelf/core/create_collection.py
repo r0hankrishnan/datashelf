@@ -1,79 +1,77 @@
-import os
+from pathlib import Path
+import pathlib
+from typing import Union
 from datashelf.utils.tools import _find_datashelf_root
-from datashelf.utils.shelf import _update_datashelf_metadata_with_added_collection
-from datashelf.utils.collection import _make_collection_metadata_structure
 from datashelf.utils.logging import setup_logger
-import pandas as pd
+from datashelf.core.metadata import _initialize_collection_metadata, _add_collection_to_datashelf_metadata
 
 logger = setup_logger(__name__)
 
 def create_collection(collection_name:str):
-    """
-    First checks if .datashelf exists anywhere between the current working directory and the filesystem root.
-    Then, finds the .datashelf path and checks if the collection folder and metadata filee already exist.
-    If they don't exist, it creates the collection folder inside the .datashelf directory. 
-    If the collection exists but the metadata file does not, it creates the metadata file in the collection folder 
-    (this should also probably raise some type of error).
+    """ Checks if .datashelf exists and if collection directory already exists and is not corrupted. If all checks pass, 
+    creates the collection folder inside the .datashelf directory, initializes a {collection_name}_metadata.yaml file,
+    and updates the datashelf_metadata.yaml file with the newly created collection's information.
 
     Args:
-        collection_name (str): The name of the collection you want to create. All strings will be lowercased and have 
-        their spaces replaced with underscores.
+        collection_name (str): The name of the collection being created. 
+        Will automatically be converted into snake case. Avoid using any characters other than spaces and underscores.
 
     Raises:
-        NotADirectoryError: If the function cannot find a .datashelf directory in the file tree, it will raise an error 
-        and prompt you to initialize a new datashelf before trying to create a collection.
+        NotADirectoryError: Raised if function cannot find your .datashelf directory
+        FileNotFoundError: Raised if function finds existing collection directory without a metadata file. This is a sign
+        that the process is corrupted and the user should consider deleting the entire .datashelf directory and re-initialize.
     """
     
     datashelf_path = _find_datashelf_root(return_datashelf_path = True)
     
     # Check that datashelf has been initialized
-    if os.path.isdir(datashelf_path):
+    if datashelf_path.is_dir():
         pass
     else:
         raise NotADirectoryError(".datashelf does not exist. Please initialize datashelf with init() before creating a collection.")
 
-    collection_path = os.path.join(datashelf_path, collection_name.lower().replace(" ", "_"))
+    collection_path = datashelf_path/collection_name.lower().replace(" ", "_")
     metadata_filename = collection_name.lower().replace(" ", "_") + "_metadata.yaml"
     
-    # Make collection subfolder in .datashelf
-    if os.path.isdir(collection_path):
-        _create_only_collection_metadata(collection_name = collection_name, collection_path = collection_path, metadata_filename = metadata_filename)
-        
-    else:
-        _create_collection_dir_and_metadata(collection_name = collection_name, collection_path = collection_path, metadata_filename = metadata_filename)
+    # Check for potential collection file corruption
+    if collection_path.exists():
+        collection_metadata_path = datashelf_path/f'{collection_name.lower().replace(" ", "_")}_metadata.yaml'
 
-def _create_only_collection_metadata(collection_name:str, collection_path:str, metadata_filename:str) -> bool:
-    
-    if os.path.exists(os.path.join(collection_path, metadata_filename)):
-        logger.info(f"Collection already exists at {collection_path} with metadata file: {metadata_filename}.")
-        return 1
-    else:
-        logger.info(f"collection directory: {collection_name} exists but does not have a metadatafile.\nCreating {metadata_filename}...")
-        try:
-            with open(os.path.join(collection_path, metadata_filename), 'w') as f:
-                pass
-            _make_collection_metadata_structure(collection_name = collection_name)
-            _update_datashelf_metadata_with_added_collection(collection_name = collection_name)
+        if collection_metadata_path.exists():
+            logger.info(f"Collection '{collection_name}' already exists with metadata.")
+            return
+        else:
+            raise FileNotFoundError(
+                f"Collection directory '{collection_path}' exists but the metadata file '{metadata_filename}' does not.\n"
+                f"This may indicate a corrupted or manually modified state. Consider deleting and recreating the collection."
+            )
             
-        except Exception as e:
-            logger.error(f"An error occurred: {e}")
-            raise
-        
-        logger.info(f"Metadata file: {metadata_filename} created in {collection_path}.")
-        return 0
+    # If all checks pass, create collection, initialize collection metadata, and update datashelf metadata
+    else:
+        _create_collection(collection_path = collection_path, collection_name = collection_name)
     
-def _create_collection_dir_and_metadata(collection_name:str, collection_path:str, metadata_filename:str) -> bool:
-    os.makedirs(collection_path, exist_ok = True)
-    try:
-        with open(os.path.join(collection_path, metadata_filename), 'w') as f:
-            pass
-        _make_collection_metadata_structure(collection_name = collection_name)
-        _update_datashelf_metadata_with_added_collection(collection_name = collection_name)
-        
     
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        raise
     
-    logger.info(f"Collection directory: {collection_name} and metadatafile: {metadata_filename} created.")
+def _create_collection(collection_path:Union[str,pathlib.PosixPath], collection_name:str):
+    """Creates a folder with a snake-cased collection_name at collection_path. Then, initializes the collection's
+    metadata and updates the datashelf_metadata.yaml file to reflect the newly added collection.
+
+    Args:
+        collection_path (Union[str,pathlib.PosixPath]): The directory path of the collection folder (pulled from create_collection).
+        collection_name (str): The name of the collection to be created (pulled from create_collection).
+
+    Returns:
+        _type_: Returns a 0 if all operations pass successfully. 
+    """
+    # Create collection folder
+    collection_path = Path(collection_path)
+    collection_path.mkdir(parents = True, exist_ok = True)
+    
+    # Create default collection metadata file
+    _initialize_collection_metadata(collection_name = collection_name)
+    
+    #Update datashelf metadata with new collection
+    _add_collection_to_datashelf_metadata(collection_name = collection_name)
+    
+    logger.info(f'Collection directory: {collection_name.lower().replace(" ", "_")} and metadata file created.')
     return 0
