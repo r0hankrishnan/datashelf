@@ -1,5 +1,7 @@
 # DataShelf   
 
+[DataShelf logo and tagline](./assets/DataShelf-no-bg.svg)
+
 A git-like version control system for datasets.
 
 ## Overview
