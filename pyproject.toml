@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "datashelf"
-version = "0.1.0"
-description = "A git-like version control system for datasets"
+version = "0.2.0"
+description = "A simple local data versioning library"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
