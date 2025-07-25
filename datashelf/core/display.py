@@ -41,17 +41,23 @@ def _display_datashelf_metadata(field = Literal['metadata', 'collections']):
         err_msg = f'field must be either "metadata" or "collections". {field} is invalid.'
         logger.error(err_msg)
         raise ValueError(err_msg)
-    
-    datashelf_path = _find_datashelf_root(return_datashelf_path=True)
-    datashelf_metadata_path = datashelf_path/'datashelf_metadata.yaml'
+    try:
+        datashelf_path = _find_datashelf_root(return_datashelf_path=True)
+        datashelf_metadata_path = datashelf_path/'datashelf_metadata.yaml'
+    except Exception as e:
+        err_msg = f"An error occured. Make sure you are in the same directory as your .datashelf folder."
+        logger.error(err_msg)
+        raise ValueError(e)       
     with open(datashelf_metadata_path, 'r') as f:
         data = yaml.safe_load(f)
-        
+    print("hi")
+
     if field == 'metadata':
-        print(tabulate([data['metadata']], headers = "keys", tablefmt = "grid"))
-    
+            print(tabulate([data['metadata']], headers = "keys", tablefmt = "grid"))
+        
     else:
         print(tabulate(data['collections'], headers = "keys", tablefmt = "grid"))
+    
         
 
 def _display_collection_metadata(collection_name:str, field = Literal['metadata', 'files']):
@@ -60,9 +66,14 @@ def _display_collection_metadata(collection_name:str, field = Literal['metadata'
         logger.error(err_msg)
         raise ValueError(err_msg)
     
-    datashelf_path = _find_datashelf_root(return_datashelf_path=True)
-    collection_path = datashelf_path/collection_name.lower().replace(" ", "_")
-    collection_metadata_path = collection_path/f'{collection_name.strip().lower().replace(" ", "_")}_metadata.yaml'
+    try:
+        datashelf_path = _find_datashelf_root(return_datashelf_path=True)
+        collection_path = datashelf_path/collection_name.lower().replace(" ", "_")
+        collection_metadata_path = collection_path/f'{collection_name.strip().lower().replace(" ", "_")}_metadata.yaml'
+    except Exception as e:
+        err_msg = f"An error occured. Make sure you are in the same directory as your .datashelf folder."
+        logger.error(err_msg)
+        raise ValueError(e)    
     
     with open(collection_metadata_path, 'r') as f:
         data = yaml.safe_load(f)
