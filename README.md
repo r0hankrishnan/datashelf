@@ -1,213 +1,92 @@
-# DataShelf   
+# DataShelf
 
 ![DataShelf logo and tagline](./assets/DataShelf-no-bg.svg)
 
-A simple version control system for datasets.
+DataShelf is a lightweight version control system for datasets.
 
-## Overview
-
-DataShelf helps data scientists and analysts track how their datasets evolve over time. Similar to how git tracks code changes, DataShelf tracks dataset versions with metadata, tags, and commit messages using an intuitive, git-inspired API.
+It helps analysts and data scientists manage evolving versions of their data—right from Python or the command line—without needing to track CSVs or Parquet files manually. It’s especially useful for iterative workflows involving EDA, feature engineering, or model development.
 
 ## Key Features
 
-- **Version Control for Data**: Track dataset changes with timestamps, tags, and descriptive messages
-- **Hash-Based Deduplication**: Automatically detect and prevent duplicate dataset storage using SHA-256 hashing
-- **Collection Organization**: Group related datasets into logical collections
-- **Smart File Format Selection**: Automatically chooses optimal format (CSV/Parquet) based on data size
-- **Comprehensive Metadata Tracking**: Detailed logging of dataset history and modifications
-- **Data Retrieval**: Load any previous dataset version back into memory as pandas DataFrames
-- **CLI Interface**: Command-line tools for common operations
-- **Tag Enforcement**: Configurable validation to maintain consistent tagging standards
+- Track changes to datasets across time using hashes, tags, and messages
+- Restore any prior version of a dataset, even after overwrites
+- Group datasets into named collections for clean project structure
+- Use simple CLI and Python commands to inspect, save, or retrieve files
+- Avoid duplication, overwrite mistakes, or unclear file names
 
-## Core Concepts
-
-- **Collections**: Logical groupings of related datasets (e.g., "sales_analysis_q4", "customer_analytics")
-- **Versioning**: Each dataset save creates a timestamped version with auto-incrementing version numbers
-- **Tags**: Label versions for easy identification (e.g., "raw", "intermediate", "cleaned", "final", "ad-hoc")
-- **Messages**: Descriptive commit messages explaining dataset changes
-- **Hashes**: Unique SHA-256 identifiers for each dataset version enabling deduplication and retrieval
-
-## Quick Start
-
-### Using the Python API
+## Quick Example
 
 ```python
 import datashelf.core as ds
-import pandas as pd
 
-# Initialize datashelf in your project
-ds.init()
+ds.init()  # Creates .datashelf/ in your working directory
 
-# Create a collection for your datasets
-ds.create_collection("sales_analysis")
+ds.save("data/raw_sales.csv", collection="Sales Q4", tag="raw", message="Initial export")
+ds.save("data/cleaned_sales.csv", collection="Sales Q4", tag="cleaned", message="Nulls removed")
 
-# Save a dataset version
-df = pd.DataFrame({"product": ["A", "B"], "sales": [100, 200]})
-ds.save(df, 
-     collection_name="sales_analysis", 
-     name="raw_sales", 
-     tag="raw", 
-     message="Initial sales data import")
+# Checkout a prior version
+ds.checkout("Sales Q4", hash="abc123", output_path="restored.csv")
+````
 
-# Load a previous version back into memory
-loaded_df = ds.load("sales_analysis", "dataset_hash_here")
-
-# View collection metadata
-ds.ls("coll-files")  # Shows all datasets in a collection
-```
-
-### Using the CLI
+Or via CLI:
 
 ```bash
-# Initialize datashelf in your project
+# Init and create collection
 datashelf init
+datashelf create_collection "Sales Q4"
 
-# Create a collection for your datasets
-datashelf create-collection sales_analysis
+# Save data using python API
+...
 
-# View project metadata
-datashelf ls ds-md
-
-# View all collections
-datashelf ls ds-coll
-
-# View collection files (interactive)
+# Display collection files in a table
 datashelf ls coll-files
 
-# Checkout a dataset to working directory
-datashelf checkout collection_name dataset_hash
+# Checkout data
+datashelf checkout <collection_name> <hash>
 ```
 
-## Project Structure
+## Concepts
 
-```
-your_project/
-├── .datashelf/
-│   ├── datashelf_metadata.yaml      # Project-level metadata
-│   ├── datashelf_config.yaml        # Configuration settings
-│   └── collection_name/
-│       ├── collection_metadata.yaml # Collection-specific metadata
-│       └── dataset_files.[csv|parquet] # Your versioned datasets
-├── your_notebooks.ipynb
-└── your_scripts.py
-```
+* **Collections**: Logical groups of datasets, usually tied to a single analysis or project
+* **Tags**: Labels like `raw`, `cleaned`, `final` that describe dataset state
+* **Messages**: Optional commit-style messages saved alongside each version
+* **Hashes**: Unique identifiers used to retrieve exact versions
+* **Snapshots**: Project-wide point-in-time saves of all collections
+
+For example, you might have separate collections for:
+
+* `Sales Forecasting Q4`
+* `People Analytics Q4`
+* `Customer Feedback Analysis`
+
+Each collection tracks its own datasets independently.
 
 ## Installation
 
-### From Source
-
 ```bash
-git clone https://github.com/yourusername/datashelf.git
-cd datashelf
-pip install -e .
+pip install datashelf
 ```
 
-### Direct from GitHub
+Requires Python 3.8+
 
-```bash
-pip install git+https://github.com/yourusername/datashelf.git
-```
 
-### Development Installation
+## Documentation
 
-For contributors or those wanting to modify the code:
-
-```bash
-git clone https://github.com/yourusername/datashelf.git
-cd datashelf
-pip install -e ".[dev]"
-```
-
-## Core API Reference
-
-### Initialization
-- `ds.init()` - Initialize DataShelf in current directory
-- `ds.create_collection(name)` - Create a new collection
-
-### Data Operations  
-- `ds.save(df, collection_name, name, tag, message)` - Save a dataset version
-- `ds.load(collection_name, hash_value)` - Load dataset into pandas DataFrame
-- `ds.checkout(collection_name, hash_value)` - Copy dataset file to working directory
-
-### Metadata & Inspection
-- `ds.ls("ds-md")` - Show DataShelf project metadata
-- `ds.ls("ds-coll")` - Show all collections overview
-- `ds.ls("coll-md")` - Show specific collection metadata
-- `ds.ls("coll-files")` - Show all files in a collection
-
-### Configuration
-- `check_tag_enforcement()` - Check if tag validation is enabled
-- `get_allowed_tags()` - Get list of valid tags
-- `set_tag_enforcement(boolean)` - Enable/disable tag validation-- **Not recommended to use**
-
-## Use Cases
-
-### Current Capabilities (v0.2.0)
-- **Dataset Versioning**: Save and track pandas DataFrames with comprehensive metadata
-- **Data Retrieval**: Load any previous dataset version back into memory for analysis
-- **Duplicate Prevention**: Automatically detect and prevent saving identical datasets
-- **Collection Organization**: Group related datasets into organized, searchable collections  
-- **Metadata Management**: Maintain detailed records of all dataset changes with timestamps and version numbers
-- **CLI Operations**: Perform common tasks via command-line interface
-- **Smart Storage**: Automatic CSV/Parquet format selection based on data size
-- **Configuration Management**: Customizable tag enforcement and validation rules
-
-### Future Capabilities (Planned)
-- **Dataset Comparison**: Visual and statistical comparison between dataset versions
-- **Branch-like Functionality**: Create divergent analysis paths from any dataset version
-- **Advanced Query Interface**: Search and filter datasets by metadata
-- **Integration Hooks**: Connect with popular ML frameworks and data pipelines
-- **Collaboration Features**: Share and sync collections across team members
-
-## Configuration
-
-DataShelf includes configurable options for team consistency:
-
-```python
-# Check current settings
-ds.check_tag_enforcement()  # Returns True/False
-ds.get_allowed_tags()       # Returns ['raw', 'intermediate', 'cleaned', 'ad-hoc', 'final']
-
-# Customize tag enforcement
-ds.set_tag_enforcement(True)  # Enforce valid tags
-```
-
-Default configuration includes:
-- **Tag enforcement**: Enabled by default
-- **Allowed tags**: `['raw', 'intermediate', 'cleaned', 'ad-hoc', 'final']`
-- **Auto-format selection**: CSV for <10MB, Parquet for ≥10MB
-
-## Examples
-
-Check out the comprehensive examples in the [`examples/`](./examples/) directory:
-
-- [`datashelf_v020.ipynb`](./examples/v0.2.0/datashelf_v020.ipynb) - Full feature walkthrough
+* [Getting Started (5 min)](docs/getting-started.md)
+* [Advanced Usage](docs/advanced-usage.md)
+* [CLI Reference](docs/cli-reference.md)
+* [Troubleshooting](docs/troubleshooting.md)
 
 ## Contributing
 
-DataShelf is actively developed and welcomes contributions! Whether you're interested in:
-
-- **Bug fixes** - Help us improve stability
-- **New features** - Implement planned functionality  
-- **Documentation** - Improve guides and examples
-- **Testing** - Expand test coverage
-- **Ideas** - Suggest new capabilities
-
-Please open an issue or submit a pull request. For major changes, please open an issue first to discuss your ideas.
+Issues, suggestions, and PRs welcome. If you'd like to get involved or have feedback, open an issue or submit a pull request.
 
 ## Changelog
 
-### v0.2.0 (Current)
-- Full dataset loading with `ds.load()`
-- File checkout with `ds.checkout()`  
-- Comprehensive CLI interface
-- Metadata display system with `ds.ls()`
-- Default tag enforcement
-- Smart file format selection
-- Enhanced error handling and validation
+See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.
 
-### v0.1.0
-- Basic dataset saving and versioning
-- Collection management
-- Hash-based deduplication
-- Core metadata tracking
+## License
+
+This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
+
+

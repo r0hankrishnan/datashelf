@@ -18,8 +18,7 @@
 | [Getting Started](./getting-started.md) | 5-minute quickstart guide             |
 | [CLI Reference](./cli-reference.md)     | Full list of `datashelf` CLI commands |
 | [Troubleshooting](./troubleshooting.md) | Common issues and how to resolve them |
+| [Advanced Usage](./advanced-usage.md)   | Other more advanced tools and methods | 
 
 For an in-depth walkthrough, see the [DataShelf v0.2.0 Complete Guide](../notebooks/datashelf_v0.2.0.ipynb).
-
----
 
