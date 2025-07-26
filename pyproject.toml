@@ -49,8 +49,8 @@ Homepage = "https://github.com/r0hankrishnan/datashelf"
 Repository = "https://github.com/r0hankrishnan/datashelf"  
 Issues = "https://github.com/r0hankrishnan/datashelf/issues"  
 
-[tool.setuptools]
-packages = ["datashelf"]
+[tool.setuptools.packages.find]
+where = ["."]
 
 [tool.black]
 line-length = 88
