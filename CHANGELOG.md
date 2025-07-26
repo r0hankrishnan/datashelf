@@ -8,6 +8,13 @@ and this project tries to adheres to [Semantic Versioning](https://semver.org/sp
 ## [Unreleased]
 
 - Internal improvements and documentation refinements in preparation for v0.3.0
+- Move shelf.py and collection.py helper functions into .py file in core/
+- Allow parent-child relationships
+- Allow for tag filtering in CLI
+- Update CLI styling
+- Add a diff functionality to show simple comparisons between two datasets
+- Build visualization helpers to show collection history and tag stats
+- Allow users to save a csv file directly
 
 ## [v0.2.0] – 2025-07-24
 
