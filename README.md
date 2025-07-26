@@ -73,9 +73,9 @@ Requires Python 3.8+
 ## Documentation
 
 * [Getting Started (5 min)](docs/getting-started.md)
-* [Advanced Usage](docs/advanced-usage.md)
 * [CLI Reference](docs/cli-reference.md)
 * [Troubleshooting](docs/troubleshooting.md)
+* [Advanced Usage](docs/advanced-usage.md)
 
 ## Contributing
 
