@@ -20,11 +20,15 @@ def init(set_dir:str = None):
         msg = "set_dir functionality has not been fully built out for datashelf yet. Please run init() while in the desired directory for now."
         logger.error(msg)
         raise ValueError(msg)
-        _init_with_set_dir(set_dir = set_dir)
+        res = _init_with_set_dir(set_dir = set_dir)
     
     # If no set path, initialize .datashelf in cwd
     else:
-        _init_with_current_dir()
+        res = _init_with_current_dir()
+        if res == 0:
+            return 0
+        else:
+            return 1
         
 def _init_with_set_dir(set_dir:str):
     

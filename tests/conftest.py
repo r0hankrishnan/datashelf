@@ -3,19 +3,18 @@ import pytest
 import pandas as pd
 import numpy as np
 import tempfile
-import shutil
 from pathlib import Path
 import os
 
 @pytest.fixture
 def temp_dir():
-    """Create a temporary directory for testing"""
-    temp_path = tempfile.mkdtemp()
-    original_cwd = os.getcwd()
-    os.chdir(temp_path)
-    yield Path(temp_path)
-    os.chdir(original_cwd)
-    shutil.rmtree(temp_path)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        original_cwd = Path.cwd()
+        try:
+            os.chdir(tmpdir)
+            yield Path(tmpdir)
+        finally:
+            os.chdir(original_cwd)
 
 @pytest.fixture
 def sample_dataframe():
@@ -33,9 +32,9 @@ def large_dataframe():
     """Create a large DataFrame to test Parquet formatting"""
     np.random.seed(42)
     return pd.DataFrame({
-        'id': range(50000),
-        'value': np.random.randn(50000),
-        'category': np.random.choice(['X', 'Y', 'Z'], 50000)
+        'id': range(200000),
+        'value': np.random.randn(200000),
+        'category': np.random.choice(['X', 'Y', 'Z'], 200000)
     })
 
 

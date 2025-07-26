@@ -25,10 +25,10 @@ def create_collection(collection_name:str):
     datashelf_path = _find_datashelf_root(return_datashelf_path = True)
     
     # Check that datashelf has been initialized
-    if datashelf_path.is_dir():
-        pass
-    else:
+    if datashelf_path is None or not datashelf_path.is_dir():
         raise NotADirectoryError(".datashelf does not exist. Please initialize datashelf with init() before creating a collection.")
+    else:
+        pass
 
     collection_path = datashelf_path/collection_name.lower().replace(" ", "_")
     metadata_filename = collection_name.lower().replace(" ", "_") + "_metadata.yaml"
@@ -49,6 +49,7 @@ def create_collection(collection_name:str):
     # If all checks pass, create collection, initialize collection metadata, and update datashelf metadata
     else:
         _create_collection(collection_path = collection_path, collection_name = collection_name)
+        return 0
     
     
     

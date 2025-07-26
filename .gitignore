@@ -1,3 +1,8 @@
+# Un-checked tests
+./tests/test_core_functionality.py
+./tests/test_edge_cases.py
+./tests/test_integration_scenarios.py
+
 # note files
 tag-advice.md
 
