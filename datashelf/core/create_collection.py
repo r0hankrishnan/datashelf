@@ -35,7 +35,7 @@ def create_collection(collection_name:str):
     
     # Check for potential collection file corruption
     if collection_path.exists():
-        collection_metadata_path = datashelf_path/f'{collection_name.lower().replace(" ", "_")}_metadata.yaml'
+        collection_metadata_path = collection_path/metadata_filename
 
         if collection_metadata_path.exists():
             logger.info(f"Collection '{collection_name}' already exists with metadata.")
