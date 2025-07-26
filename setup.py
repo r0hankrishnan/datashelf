@@ -32,6 +32,8 @@ setup(
         "pandas>=1.0.0",
         "pyyaml>=5.0.0",
         "numpy>=1.18.0",
+        "tabulate==0.9.0",
+        "fastparquet==2024.11.0"
     ],
     extras_require={
         "dev": [
@@ -39,6 +41,7 @@ setup(
             "pytest-cov>=2.0.0",
             "black>=21.0.0",
             "flake8>=3.8.0",
+            "marimo==0.14.13"
         ],
     },
     entry_points={
