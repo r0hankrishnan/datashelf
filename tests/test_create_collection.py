@@ -69,3 +69,24 @@ def test_error_find_collection_without_metadata(temp_dir, monkeypatch):
             )
     with pytest.raises(FileNotFoundError):
         ds.create_collection("Test Collection")
+        
+def test_collection_already_exists(temp_dir, monkeypatch):
+    monkeypatch.setattr("builtins.input", lambda _:"yes")
+    result = ds.init()
+    assert result == 0
+    assert (temp_dir / '.datashelf').exists()
+    
+    monkeypatch.setattr(
+        tools,
+        "_find_datashelf_root",
+        lambda return_datashelf_path=True: temp_dir / ".datashelf"
+    )
+    result = ds.create_collection("Test Collection")
+    collection_path = temp_dir / '.datashelf' / 'test_collection'
+    metadata_path = collection_path / 'test_collection_metadata.yaml'
+    assert result == 0
+    assert collection_path.exists()
+    assert metadata_path.exists()
+    
+    ds.create_collection("Test Collection")
+    assert "Collection 'test_collection' already exists with metadata."
