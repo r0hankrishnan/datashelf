@@ -8,6 +8,9 @@ and this project tries to adheres to [Semantic Versioning](https://semver.org/sp
 ## [Unreleased]
 
 - Internal improvements and documentation refinements in preparation for v0.3.0
+- Allow users to delete a data set from their collection
+- Create a function to delete a collection
+- Create a function to delete .datashelf/
 - Move shelf.py and collection.py helper functions into .py file in core/
 - Allow parent-child relationships
 - Allow for tag filtering in CLI
