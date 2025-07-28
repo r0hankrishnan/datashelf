@@ -7,6 +7,7 @@ and this project tries to adheres to [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
+- Add text wrapping to tabulate display
 - Internal improvements and documentation refinements in preparation for v0.3.0
 - Allow users to delete a data set from their collection
 - Create a function to delete a collection
