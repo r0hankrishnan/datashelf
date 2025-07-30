@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="datashelf",
-    version="0.2.0",
+    version="0.3.0",
     author="Rohan Krishnan",  
     author_email="your.email@example.com",  
     description="A simple local data versioning library",
@@ -32,8 +32,9 @@ setup(
         "pandas>=1.0.0",
         "pyyaml>=5.0.0",
         "numpy>=1.18.0",
-        "tabulate==0.9.0",
-        "fastparquet==2024.11.0"
+        "fastparquet==2024.11.0",
+        "questionary==2.1.0",
+        "rich==14.1.0"
     ],
     extras_require={
         "dev": [
