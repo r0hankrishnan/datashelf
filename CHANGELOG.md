@@ -20,6 +20,16 @@ and this project tries to adheres to [Semantic Versioning](https://semver.org/sp
 - Build visualization helpers to show collection history and tag stats
 - Allow users to save a csv file directly
 
+## [v0.3.0] - 
+
+## Added
+- CLI function to save files to datashelf
+
+## Changed
+- Refactored ls table display to use rich library instead of tabulate
+- Replaced stock ls function with separate multiselect ls function for CLI interface
+
+
 ## [v0.2.0] – 2025-07-24
 
 ### Added
