@@ -1,4 +1,6 @@
 import pandas as pd
+from pathlib import Path
+import shutil
 from datashelf.utils.tools import _find_datashelf_root, _get_collection_files
 from datashelf.core.metadata import _get_next_version_number, _add_file_to_collection_metadata,\
     _update_collection_metadata_info, _update_datashelf_metadata_collection_files
@@ -31,16 +33,13 @@ def save(df:pd.DataFrame, collection_name:str, name:str, tag:str, message:str):
     tags_enforced = check_tag_enforcement()
     allowed_tags = get_allowed_tags()
     
-    if tags_enforced:
-        if tag in allowed_tags:
-            pass
-        else:
-            err_msg = (f'{tag} is not a valid tag.'
-                       f'Tag enforcement is currently set to {tags_enforced}.'
-                       f'You cannot change enforcement as of this version of DataShelf.'
-                       f'Please use one of the following allowed tags {", ".join(allowed_tags)}')
-            logger.error(err_msg)
-            raise ValueError(err_msg)
+    if tags_enforced and tag in allowed_tags:
+        err_msg = (f'{tag} is not a valid tag.'
+                    f'Tag enforcement is currently set to {tags_enforced}.'
+                    f'You cannot change enforcement as of this version of DataShelf.'
+                    f'Please use one of the following allowed tags {", ".join(allowed_tags)}')
+        logger.error(err_msg)
+        raise ValueError(err_msg)
     
     # Run pandas process if passed a pandas df
     if isinstance(df, pd.DataFrame):
@@ -58,6 +57,11 @@ def save(df:pd.DataFrame, collection_name:str, name:str, tag:str, message:str):
         err_msg = "Unsupported data type. DataShelf only supports pandas DataFrames at the moment."
         logger.error(err_msg)
         raise ValueError(err_msg)
+
+
+################################################################################
+# Helper functions for parsing and saving pandas data frames
+################################################################################
 
 def _pandas_save_df(df:pd.DataFrame, collection_name:str, name:str, tag:str, message:str):
     """_summary_
@@ -142,7 +146,22 @@ def _pandas_assign_smart_save(df:pd.DataFrame):
     else:
         logger.info(f'Save as Parquet ({df_size / 1e6:.2f} MB)')
         return '.parquet'
-    
+
+
+################################################################################
+# Helper functions for saving and parsing Polars data frames
+################################################################################
+
+def _save_polars_data_frame(df:pl.DataFrame, collection_name:str, name:str, tag:str, message:str):
+    ...
+
+def _polars_assign_smart_save(df:pd.DataFrame):
+    ...
+
+################################################################################
+# General save and metadata updating logic
+################################################################################
+
 def _save_and_register_df(df, file_type:str, collection_name:str, file_name:str, tag:str, message:str, df_hash:str, 
                           version:int, file_path:str, collection_path:str):
     """_summary_
@@ -183,3 +202,74 @@ def _save_and_register_df(df, file_type:str, collection_name:str, file_name:str,
         
         return 0
             
+
+################################################################################
+# CLI save functions for files
+################################################################################
+
+def _save_from_file(file_path:str, collection_name:str, name:str, tag:str, message:str,
+                   duplicate:bool = False):
+    
+    path = Path(file_path)
+    
+    # Check for valid file type- only support csv and parquet for now
+    if path.suffix not in [".csv", ".parquet"]:
+        err_msg = f'DataShelf only supports csv and parquet files at the moment. Please convert your file to one of those two formats.'
+        logger.error(err_msg)
+        raise TypeError(err_msg)
+    
+    # Check that filepath is valid
+    if path.exists():
+        pass
+    else:
+        err_msg = (f'File path {file_path} does not exist.'
+                   ' Make sure you enter a valid file path.')
+
+    # Tag checking
+    tags_enforced = check_tag_enforcement()
+    allowed_tags = get_allowed_tags()
+    
+    if tags_enforced and tag not in allowed_tags:
+        err_msg = (f'{tag} is not a valid tag.'
+                    f'Tag enforcement is currently set to {tags_enforced}.'
+                    f'You cannot change enforcement as of this version of DataShelf.'
+                    f'Please use one of the following allowed tags {", ".join(allowed_tags)}')
+        logger.error(err_msg)
+        raise ValueError(err_msg)
+
+    file_type = path.suffix
+    new_file_name = f'{name.lower().replace(" ", "_")}_{tag.lower()}' + file_type
+    datashelf_path = _find_datashelf_root(return_datashelf_path=True)
+    collection_path = datashelf_path / f'{collection_name.lower().replace(" ", "_")}'
+    new_path = collection_path / new_file_name
+    version_number = _get_next_version_number(collection_name = collection_name, collection_path = collection_path)    
+
+    
+    if file_type == ".csv":
+        data = pd.read_csv(filepath_or_buffer=str(path))
+        hashed_df = _hash_pandas_df(data)
+    else:
+        data = pd.read_parquet(path=str(path))
+        hashed_df = _hash_pandas_df(data)
+    
+    if duplicate:
+        shutil.copy2(str(path), str(new_path))
+        _add_file_to_collection_metadata(collection_name=collection_name, file_name=name, tag=tag,
+                                         message=message, df_hash=hashed_df, version=version_number,
+                                         file_path=str(new_path))
+        _update_collection_metadata_info(collection_name=collection_name, saved_df_file_path=str(new_path), new_version=version_number)
+        _update_datashelf_metadata_collection_files(collection_name=collection_name, collection_path=str(collection_path))
+        logger.info(f'File duplicated to {collection_name.lower().replace(" " , "_")} successfully.')
+        
+        return 0
+
+    else:
+        shutil.move(str(path), str(new_path))
+        _add_file_to_collection_metadata(collection_name=collection_name, file_name=name, tag=tag,
+                                         message=message, df_hash=hashed_df, version=version_number,
+                                         file_path=str(new_path))
+        _update_collection_metadata_info(collection_name=collection_name, saved_df_file_path=str(new_path), new_version=version_number)
+        _update_datashelf_metadata_collection_files(collection_name=collection_name, collection_path=collection_path)
+        logger.info(f'File moved to {collection_name.lower().replace(" ", "_")} successfully.')
+        
+        return 0
