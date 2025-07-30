@@ -57,6 +57,17 @@ Or check it out into your working directory:
 ds.checkout("Sales Analysis Q4", "<snapshot-hash>")
 ```
 
+How to get the file hashes? Use the ls() function:
+
+```python
+ds.ls(
+    to_display="coll-files",
+    collection_name="<collection_name>"
+)
+```
+
+This will display a table of all files in a collection with their hashes. You can leave `collection_name` empty if you don't remember the name of your collection and you will be prompted to enter a collection name from a given list.
+
 ---
 
 ## What’s Next?
