@@ -152,7 +152,7 @@ def _pandas_assign_smart_save(df:pd.DataFrame):
 # Helper functions for saving and parsing Polars data frames
 ################################################################################
 
-def _save_polars_data_frame(df:pl.DataFrame, collection_name:str, name:str, tag:str, message:str):
+def _save_polars_data_frame(df:pd.DataFrame, collection_name:str, name:str, tag:str, message:str):
     ...
 
 def _polars_assign_smart_save(df:pd.DataFrame):
