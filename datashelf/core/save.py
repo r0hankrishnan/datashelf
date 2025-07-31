@@ -33,7 +33,7 @@ def save(df:pd.DataFrame, collection_name:str, name:str, tag:str, message:str):
     tags_enforced = check_tag_enforcement()
     allowed_tags = get_allowed_tags()
     
-    if tags_enforced and tag in allowed_tags:
+    if tags_enforced and tag not in allowed_tags:
         err_msg = (f'{tag} is not a valid tag.'
                     f'Tag enforcement is currently set to {tags_enforced}.'
                     f'You cannot change enforcement as of this version of DataShelf.'
