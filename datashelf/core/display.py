@@ -73,9 +73,9 @@ def _multiselect_ls(to_display:Literal["ds-md", "ds-coll", "coll-md", "coll-file
                     choices=collection_choices
                 ).ask()
                 #collection_name = input("Collection name? ")
-                _display_collection_metadata(collection_name = collection_name, field = "metadata")
+                _display_collection_metadata(collection_name = collection_name, field = "metadata", terminal=True)
             else:
-                _display_collection_metadata(collection_name=collection_name, field="metadata")
+                _display_collection_metadata(collection_name=collection_name, field="metadata",terminal=True)
         
         else:
             if not collection_name:
@@ -85,9 +85,9 @@ def _multiselect_ls(to_display:Literal["ds-md", "ds-coll", "coll-md", "coll-file
                     choices=collection_choices
                 ).ask()
                 #collection_name = input("Collection name? ")
-                _display_collection_metadata(collection_name = collection_name, field = "files")
+                _display_collection_metadata(collection_name = collection_name, field = "files",terminal=True)
             else:
-                _display_collection_metadata(collection_name = collection_name, field="files")
+                _display_collection_metadata(collection_name = collection_name, field="files",terminal=True)
         
     else:
         err_msg = (f'{to_display} is not a valid value for to_display.'
@@ -102,7 +102,7 @@ def _multiselect_ls(to_display:Literal["ds-md", "ds-coll", "coll-md", "coll-file
     
 
 
-def _display_datashelf_metadata(field = Literal['metadata', 'collections']):
+def _display_datashelf_metadata(field = Literal['metadata', 'collections'], terminal:bool=False):
     
     if field not in ['metadata', 'collections']:
         err_msg = f'field must be either "metadata" or "collections". {field} is invalid.'
@@ -119,19 +119,31 @@ def _display_datashelf_metadata(field = Literal['metadata', 'collections']):
     with open(datashelf_metadata_path, 'r') as f:
         data = yaml.safe_load(f)
 
-    if field == 'metadata':
-        console = Console()
+    if field == 'metadata' and terminal:
+        console = Console(force_terminal=True)
         table = _render_rich_datashelf_table(data=data, field="metadata")
+        
+        console.print(table)
+    
+    elif field == 'metadata' and not terminal:
+        console = Console(width = 200, force_terminal=True)
+        table = _render_rich_datashelf_table(data=data, field="metadata")
+        
+        console.print(table)
+        
+    elif field == 'collections' and terminal:
+        console = Console(force_terminal=True)
+        table = _render_rich_datashelf_table(data=data, field="collections")
         
         console.print(table)
                 
     else:
-        console = Console()
+        console = Console(width=200, force_terminal=True)
         table = _render_rich_datashelf_table(data=data, field="collections")
         
         console.print(table)        
 
-def _display_collection_metadata(collection_name:str, field = Literal['metadata', 'files']):
+def _display_collection_metadata(collection_name:str, field = Literal['metadata', 'files'], terminal:bool = False):
     if field not in ['metadata', 'files']:
         err_msg = f'field must be either "metadata" or "files". {field} is invalid.'
         logger.error(err_msg)
@@ -149,14 +161,26 @@ def _display_collection_metadata(collection_name:str, field = Literal['metadata'
     with open(collection_metadata_path, 'r') as f:
         data = yaml.safe_load(f)
         
-    if field == 'metadata':
-        console = Console()
+    if field == 'metadata' and terminal:
+        console = Console(force_terminal=True)
         table = _render_rich_collection_table(data=data, field="metadata")
         
         console.print(table)
-            
+        
+    elif field == 'metadata' and not terminal:
+        console = Console(width=200, force_terminal=True)
+        table = _render_rich_collection_table(data=data, field="metadata")
+        
+        console.print(table)
+        
+    elif field == 'files' and terminal:
+        console = Console(force_terminal=True)
+        table = _render_rich_collection_table(data=data, field="files")
+        
+        console.print(table)
+        
     else:
-        console = Console()
+        console = Console(width=200, force_terminal=True)
         table = _render_rich_collection_table(data=data, field="files")
         
         console.print(table)
@@ -242,19 +266,16 @@ def _render_rich_collection_table(data:dict, field:Literal["metadata", "files"])
         for key in data["files"][0].keys():
             if key == "hash":
                 # Show full hash, no wrapping, no truncation
-                table.add_column(key, no_wrap=True)
+                table.add_column(key, min_width=15, max_width=40, overflow="fold")
             elif key in ("file_path", "message"):
-                table.add_column(key)
+                table.add_column(key, min_width=15, max_width=40, overflow="fold")
             else:
-                table.add_column(key)
+                table.add_column(key, min_width=15, max_width=40, overflow="fold")
 
         for row in data["files"]:
             new_row = []
-            for k, v in row.items():
-                if k in ("file_path", "message"):
-                    new_row.append(wrap_text(v, 50))
-                else:
-                    new_row.append("" if v is None else str(v))
+            for _, v in row.items():
+                 new_row.append("" if v is None else str(v))
             table.add_row(*new_row)
             
         return table
