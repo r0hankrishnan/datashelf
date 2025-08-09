@@ -4,7 +4,7 @@
 
 DataShelf is a lightweight version control system for datasets.
 
-It helps analysts and data scientists manage evolving versions of their data—right from Python or the command line—without needing to track CSVs or Parquet files manually. It’s especially useful for iterative workflows involving EDA, feature engineering, or model development.
+It helps analysts and data scientists manage evolving versions of their data—right from Python or the command line—without needing to track CSVs or Parquet files manually. It’s a useful tool for iterative workflows involving EDA, feature engineering, or model development.
 
 ## Key Features
 
