@@ -19,15 +19,13 @@ setup(
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Topic :: Scientific/Engineering",
         "Topic :: Software Development :: Version Control",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "pandas>=1.0.0",
         "pyyaml>=5.0.0",
@@ -41,8 +39,7 @@ setup(
             "pytest>=6.0.0",
             "pytest-cov>=2.0.0",
             "black>=21.0.0",
-            "flake8>=3.8.0",
-            "marimo==0.14.13"
+            "flake8>=3.8.0"
         ],
     },
     entry_points={

@@ -18,14 +18,22 @@ It helps analysts and data scientists manage evolving versions of their data—r
 
 ```python
 import datashelf.core as ds
+import pandas as pd
 
 ds.init()  # Creates .datashelf/ in your working directory
 
-ds.save("data/raw_sales.csv", collection="Sales Q4", tag="raw", message="Initial export")
-ds.save("data/cleaned_sales.csv", collection="Sales Q4", tag="cleaned", message="Nulls removed")
+df_q4_sales = pd.DataFrame({
+    "date": pd.date_range("2024-10-01", periods=10, freq="7D"),
+    "product": np.random.choice(["Laptop", "Phone", "Tablet"], 10),
+    "units_sold": np.random.randint(1, 20, 10),
+    "unit_price": np.random.randint(300, 1500, 10)
+})
+df_q4_sales["total_sales"] = df_q4_sales["units_sold"] * df_q4_sales["unit_price"]
+
+ds.save(df=df_q4_sales, collection_name="Sales Q4", name="Migrated Sales Q4 Data", tag="raw", message="Initial export")
 
 # Checkout a prior version
-ds.checkout("Sales Q4", hash="abc123", output_path="restored.csv")
+ds.checkout(collection_name="Sales Q4", hash="abc123")
 ````
 
 Or via CLI:
@@ -36,7 +44,7 @@ datashelf init
 datashelf create_collection "Sales Q4"
 
 # Save data using python API
-...
+datashelf save <file_path>
 
 # Display collection files in a table
 datashelf ls coll-files
