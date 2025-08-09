@@ -11,7 +11,7 @@
 * Metadata inspection
 * Smart file format selection (CSV/Parquet)
 
-### 📄 Documentation
+### Documentation
 
 | Guide                                   | Description                           |
 | --------------------------------------- | ------------------------------------- |
