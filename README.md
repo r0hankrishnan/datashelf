@@ -67,7 +67,7 @@ Each collection tracks its own datasets independently.
 pip install datashelf
 ```
 
-Requires Python 3.8+
+Requires Python 3.9+
 
 
 ## Documentation
