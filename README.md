@@ -4,7 +4,7 @@
 
 DataShelf is a lightweight version control system for datasets.
 
-It helps analysts and data scientists manage evolving versions of their data—right from Python or the command line—without needing to track CSVs or Parquet files manually. It’s especially useful for iterative workflows involving EDA, feature engineering, or model development.
+It helps analysts and data scientists manage evolving versions of their data—right from Python or the command line—without needing to track CSVs or Parquet files manually. It’s a useful tool for iterative workflows involving EDA, feature engineering, or model development.
 
 ## Key Features
 
@@ -43,9 +43,6 @@ Or via CLI:
 datashelf init
 datashelf create_collection "Sales Q4"
 
-# Save data using python API
-datashelf save <file_path>
-
 # Display collection files in a table
 datashelf ls coll-files
 
@@ -75,7 +72,7 @@ Each collection tracks its own datasets independently.
 pip install datashelf
 ```
 
-Requires Python 3.8+
+Requires Python 3.9+
 
 
 ## Documentation
