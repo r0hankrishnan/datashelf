@@ -5,23 +5,24 @@ from datashelf.core.metadata import _initialize_datashelf_metadata
 
 logger = setup_logger(__name__)
 
-def init(set_dir:str = None):
-    """_summary_
+
+def init(set_dir: str = None):
+    """User-facing function to initialize DataShelf directory
 
     Args:
-        set_dir (str, optional): _description_. Defaults to None.
+        set_dir (str, optional): [Currently unimplemented but eventually would allow user to set directory to initalize in]. Defaults to None.
 
     Returns:
-        _type_: _description_
+        int: 0 or 1 based on sucecess or error
     """
-        
+
     # If user sets a specific path for .datashelf
     if set_dir:
         msg = "set_dir functionality has not been fully built out for datashelf yet. Please run init() while in the desired directory for now."
         logger.error(msg)
         raise ValueError(msg)
-        res = _init_with_set_dir(set_dir = set_dir)
-    
+        res = _init_with_set_dir(set_dir=set_dir)
+
     # If no set path, initialize .datashelf in cwd
     else:
         res = _init_with_current_dir()
@@ -29,13 +30,14 @@ def init(set_dir:str = None):
             return 0
         else:
             return 1
-        
-def _init_with_set_dir(set_dir:str):
-    
+
+
+def _init_with_set_dir(set_dir: str):
+
     set_dir = Path(set_dir)
     current_dir = Path.cwd()
     target_dir_path = set_dir.resolve()
-    
+
     # Check if target_dir is subdirectory of current_dir
     try:
         target_dir_path.relative_to(current_dir)
@@ -47,26 +49,29 @@ def _init_with_set_dir(set_dir:str):
         )
     except ValueError:
         pass
-    
+
     # Create Path objects for datashelf dir and metadata file
-    datashelf_path = target_dir_path / '.datashelf'
-    metadata_file = datashelf_path / 'datashelf_metadata.yaml'
-    
+    datashelf_path = target_dir_path / ".datashelf"
+    metadata_file = datashelf_path / "datashelf_metadata.yaml"
+
     if datashelf_path.is_dir() and metadata_file.exists():
-        logger.info(".datashelf directory with metadata and config files already initialized")
+        logger.info(
+            ".datashelf directory with metadata and config files already initialized"
+        )
         return 1
     else:
         datashelf_path.mkdir(parents=True, exist_ok=True)
-        
+
         try:
-            _initialize_datashelf_structure(set_dir = set_dir)
-        
+            _initialize_datashelf_structure(set_dir=set_dir)
+
         except Exception as e:
             logger.error(f"An error occurred: {e}")
             raise
-        
+
         logger.info(".datashelf directory with config and metadata files initialized.")
         return 0
+
 
 def _init_with_current_dir():
 
@@ -77,7 +82,7 @@ def _init_with_current_dir():
             "Datashelf may break if you create it in a subdirectory. "
             "Please check that you are in the project's root directory before continuing.\n"
             "Continue (y/n)?"
-            )
+        )
         cont = input(warning_msg)
         if cont.lower().strip() in ["yes", "y"]:
             break
@@ -85,25 +90,26 @@ def _init_with_current_dir():
             return None
 
     # Check current directory for .datashelf and create if DNE
-    datashelf_path = Path.cwd()/'.datashelf'
-    datashelf_metadata_path = datashelf_path/'datashelf_metadata.yaml'
-    
+    datashelf_path = Path.cwd() / ".datashelf"
+    datashelf_metadata_path = datashelf_path / "datashelf_metadata.yaml"
+
     if datashelf_path.is_dir() and datashelf_metadata_path.exists():
         logger.info(".datashelf directory and metadata file already initialized.")
         return 1
     else:
         datashelf_path.mkdir(parents=True, exist_ok=True)
-        
+
         try:
             _initialize_datashelf_structure()
-        
+
         except Exception as e:
             logger.error(f"An error occurred: {e}")
             raise
-        
+
         logger.info(".datashelf directory with config and metadata files initialized.")
         return 0
 
-def _initialize_datashelf_structure(set_dir:str = None):
-    _initialize_datashelf_metadata(set_dir = set_dir)
-    _initialize_datashelf_config(set_dir = set_dir)
+
+def _initialize_datashelf_structure(set_dir: str = None):
+    _initialize_datashelf_metadata(set_dir=set_dir)
+    _initialize_datashelf_config(set_dir=set_dir)
