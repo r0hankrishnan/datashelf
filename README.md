@@ -43,9 +43,6 @@ Or via CLI:
 datashelf init
 datashelf create_collection "Sales Q4"
 
-# Save data using python API
-datashelf save <file path>
-
 # Display collection files in a table
 datashelf ls coll-files
 
