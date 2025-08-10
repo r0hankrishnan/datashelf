@@ -43,6 +43,9 @@ Or via CLI:
 datashelf init
 datashelf create_collection "Sales Q4"
 
+# Save a file
+datashelf save <file_path>
+
 # Display collection files in a table
 datashelf ls coll-files
 
