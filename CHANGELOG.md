@@ -7,28 +7,27 @@ and this project tries to adheres to [Semantic Versioning](https://semver.org/sp
 
 ## [Unreleased]
 
-- Add text wrapping to tabulate display
-- Internal improvements and documentation refinements in preparation for v0.3.0
 - Allow users to delete a data set from their collection
 - Create a function to delete a collection
 - Create a function to delete .datashelf/
-- Move shelf.py and collection.py helper functions into .py file in core/
 - Allow parent-child relationships
 - Allow for tag filtering in CLI
-- Update CLI styling
 - Add a diff functionality to show simple comparisons between two datasets
 - Build visualization helpers to show collection history and tag stats
-- Allow users to save a csv file directly
 
-## [v0.3.0] - 
+## [v0.3.0] - 2025-08-09
 
 ## Added
 - CLI function to save files to datashelf
+    - Allow users to save a csv file directly
+- Migrated table display from tabulate to rich
 
 ## Changed
+- Internal improvements and documentation refinements in preparation for v0.3.0
 - Refactored ls table display to use rich library instead of tabulate
 - Replaced stock ls function with separate multiselect ls function for CLI interface
-
+- Move shelf.py and collection.py helper functions into .py file in core/
+- Update CLI styling
 
 ## [v0.2.0] – 2025-07-24
 
