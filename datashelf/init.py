@@ -2,82 +2,52 @@ from pathlib import Path
 import yaml
 from datetime import datetime
 
-def initialize_datashelf(custom_path: str = None):
-    # Naive implementation where we just do all of the operations in the function
-    # Should pull out specific actions into their own functions eventually
-    
-    ## NOTES:
-    
-    # The only reason for the highest-level if statement is the differing `datashelf_path` variable
-    # We should pull everything else into a function that takes `datashelf_path` as an arg
-    # The creation of the config and metadata are the same regardless of the value of `datashelf_path`
-    # so it should also be a separate function with no args
-    
-    # If the user wants to initialize in a particular path
+def init(custom_path:str|None = None):
     if custom_path:
-        datashelf_path = Path(custom_path) / ".datashelf"
+        if not Path(custom_path).exists():
+            raise NotADirectoryError(f"Could not find {custom_path}. Please enter an existing path within your project.")
         
-        # This is repeated between custom_path and no custom_path -> 
-        # should pull out into its own function(s)
+        datashelf_path: Path = Path(custom_path) / ".datashelf"
         
-        # Check if custom path DataShelf alread exists
-        if datashelf_path.exists():
+        init_datashelf_directory(datashelf_path = datashelf_path)
+        init_config_and_metadata(datashelf_path = datashelf_path)
+    
+    else:
+        cwd: Path = Path().cwd()    
+        datashelf_path: Path = cwd / ".datashelf"
+        
+        init_datashelf_directory(datashelf_path = datashelf_path)
+        init_config_and_metadata(datashelf_path = datashelf_path)
+
+def init_datashelf_directory(datashelf_path:Path):
+    # Check if datashelf already exists at path -> else make .datashelf/ directory
+        if datashelf_path.exists(): # should this raise an exception?
             print(f"Datasehlf already initialized at {str(datashelf_path)}")
         
         else:
             datashelf_path.mkdir()
-            
-            # Set up config file
-            config = {
-                "Enforce CCDS Tags": True,
-                "Allowed Tags": ["raw", "external", "intermediate", "processed"]
-            }
-            
-            with open(datashelf_path/"config.yaml", "w") as f:
-                yaml.safe_dump(config, f, sort_keys = False)
-                
-            # Set up metadata file
-            metadata = {
-                "File Name": "config.yaml",
-                "File Hash": "",
-                "Message": "DataShelf configuration file.",
-                "Tag": "",
-                "Date Added": str(datetime.now())
-            }
-            
-            with open(datashelf_path / "metadata.yaml", "w") as f:
-                yaml.safe_dump(metadata, f, sort_keys = False)
-                
-    # Initialize in current working directory
-    else:
-        cwd = Path().cwd()    
-        datashelf_path = cwd / ".datashelf"
+
+def init_config_and_metadata(datashelf_path:Path):
+    # Set up config file
+    config: dict[str, bool | list[str]] = {
+        "Enforce CCDS Tags": True,
+        "Allowed Tags": ["raw", "external", "intermediate", "processed"]
+    }
+    
+    with open(datashelf_path/"config.yaml", "w") as f:
+        yaml.safe_dump(config, f, sort_keys = False)
         
-        if datashelf_path.exists():
-            print(f"Datasehlf already initialized at {str(datashelf_path)}.")
-        
-        else:
-            datashelf_path.mkdir()
-            
-            # Set up config file
-            config = {
-                "Enforce CCDS Tags": True,
-                "Allowed Tags": ["raw", "external", "intermediate", "processed"]
-            }
-            
-            with open(datashelf_path/"config.yaml", "w") as f:
-                yaml.safe_dump(config, f, sort_keys = False)
-                
-            # Set up metadata file
-            metadata = {
-                "File Name": "config.yaml",
-                "File Hash": "",
-                "Message": "DataShelf configuration file.",
-                "Tag": "",
-                "Date Added": str(datetime.now())
-            }
-            
-            with open(datashelf_path / "metadata.yaml", "w") as f:
-                yaml.safe_dump(metadata, f, sort_keys = False)
+    # Set up metadata file
+    metadata: dict[str, str] = {
+        "File Name": "config.yaml",
+        "File Hash": "",
+        "Message": "DataShelf configuration file.",
+        "Tag": "",
+        "Date Added": str(datetime.now())
+    }
+    
+    with open(datashelf_path / "metadata.yaml", "w") as f:
+        yaml.safe_dump(metadata, f, sort_keys = False)
+
                 
             
