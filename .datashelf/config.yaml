@@ -1,0 +1,7 @@
+Config:
+  Enforce CCDS Tags: true
+  Allowed Tags:
+  - raw
+  - external
+  - intermediate
+  - processed

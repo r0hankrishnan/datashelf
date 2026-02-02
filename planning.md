@@ -37,6 +37,7 @@ Outside of these fields, we are also considering a `Deleted` field to allow user
     - When user calls save function from CLI, they should get a guided process to fill out all of the necessary info -> the program should enforce tag rules if config says to.
     - When user calls from a jupyter notebook or python script, they should have a simple & clean function to call. 
     - We will need to design different processes for uploading a file in CLI vs notebook -> in a CLI, the user should pass the path of their dataset and we should compress it and copy it to `.datashelf/` vs in a notebook the user should pass a dataframe object (for now we can just support pandas) and we will compress the object and add it to `.datashelf/`
+        - These should be two separate functions -> CLI process can be `load` and pandas df process can be `save`
 
 4. View DataShelf
     - Function should display a neatly formatted rich-text table of all the entries in the metadata
