@@ -8,12 +8,13 @@ def load(lookup_key: str, to_df: bool = False) -> Path | pd.DataFrame:
     datashelf_path = find_datashelf_path()
     metadata = load_metadata(datashelf_path = datashelf_path)
         
-    name_matches = [entry_file for entry_file in metadata["files"] if entry_file["name"] == lookup_key]
-    hash_exact_match = [entry_file for entry_file in metadata["files"] if entry_file["file_hash"] == lookup_key]
-    hash_approx_match = [entry_file for entry_file in metadata["files"] 
-                         if entry_file["file_hash"].startswith(lookup_key) and entry_file["file_hash"] != lookup_key]
+    name_matches = [file_entry for file_entry in metadata["files"] if file_entry["name"] == lookup_key]
+    hash_approx_match = [file_entry for file_entry in metadata["files"] 
+                         if file_entry["file_hash"].startswith(lookup_key) and file_entry["file_hash"] != lookup_key]
+    hash_exact_match = [file_entry for file_entry in metadata["files"] if file_entry["file_hash"] == lookup_key]
+
     
-    # First check name, then exact hash, then approx hash
+    # First check name, then approx hash, then exact hash
     if len(name_matches) == 0 and len(hash_exact_match) == 0 and len(hash_approx_match) == 0:
         raise ValueError(f"No match found for {lookup_key}. Use the `list` command to see available datasets in .datashelf/.")
     
@@ -32,9 +33,6 @@ def load(lookup_key: str, to_df: bool = False) -> Path | pd.DataFrame:
     elif len(name_matches) == 1:
         file_entry = name_matches[0]
     
-    elif len(hash_exact_match) == 1:
-        file_entry = hash_exact_match[0]
-    
     elif len(hash_approx_match) > 1:
         msg = (
             f"More than one match found for {lookup_key}:"
@@ -44,11 +42,14 @@ def load(lookup_key: str, to_df: bool = False) -> Path | pd.DataFrame:
             msg += (f"\n\nFile Hash: {file_entry['file_hash']} | Name: {file_entry['name']} | Message: {file_entry['message']} | "
                     f"Tag: {file_entry['tag']}")
         
-        msg += "Please refer to the entries above, copy the appropriate file hash, and run `load` again with the file hash."
+        msg += "\n\nPlease refer to the entries above, copy the appropriate file hash, and run `load` again with the file hash."
         raise ValueError(msg)
         
     elif len(hash_approx_match) ==1:
         file_entry = hash_approx_match[0]
+        
+    elif len(hash_exact_match) == 1:
+        file_entry = hash_exact_match[0]
     
     else:
         raise RuntimeError(f"Unreachable state in `load()`.")

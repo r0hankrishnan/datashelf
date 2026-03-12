@@ -9,7 +9,7 @@ from typing import TypedDict, Optional
 from tempfile import NamedTemporaryFile
 
 class FileEntry(TypedDict):
-    file_hash: str | None
+    file_hash: str
     name: str
     stored_path: str          # relative to datashelf_path
     message: Optional[str]

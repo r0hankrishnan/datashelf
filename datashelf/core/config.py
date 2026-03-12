@@ -29,9 +29,7 @@ def get_config_tags_settings(datashelf_path:Path) -> tuple[bool, list]:
         return False, []
     
 def validate_tags(tag:str, allowed_tags:list[str]):
-    if tag in allowed_tags:
-        pass
-    else:
+    if tag not in allowed_tags:
         raise ValueError(f"Tag must be one of {', '.join(allowed_tags)}")
     
 def get_parquet_engine(datashelf_path: Path) -> Literal["pyarrow", "fastparquet"]:
