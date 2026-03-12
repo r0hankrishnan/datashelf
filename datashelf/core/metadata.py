@@ -88,7 +88,7 @@ def load_metadata(datashelf_path: Path) -> dict:
 
     if not metadata_path.exists():
         raise FileNotFoundError(
-            f"Unable to find metadata at {metadata_path}. Your `.datashelf/` directory may be corrupted. Consider reinitializing your DataShelf project."
+            f"Unable to find metadata at {metadata_path}. Your `.datashelf/` directory may be corrupted. Consider reinitializing your Datashelf project."
         )
 
     metadata_json = _read_json(path=metadata_path)
@@ -96,7 +96,7 @@ def load_metadata(datashelf_path: Path) -> dict:
     if "files" not in metadata_json or not isinstance(metadata_json["files"], list):
         msg = (
             "Invalid JOSN metadata. Your metadata file may be corrupted. "
-            "Consider reinitializing your DataShelf project."
+            "Consider reinitializing your Datashelf project."
         )
         raise ValueError(msg)
 

@@ -1,8 +1,8 @@
-# DataShelf
+# Datashelf
 
-![datashelf logo](./assets/DataShelf.svg)
+![datashelf logo](./assets/datashelf.svg)
 
-DataShelf is a lightweight **local dataset tracking tool** for data science projects.
+Datashelf is a lightweight **local dataset tracking tool** for data science projects.
 
 It stores tabular datasets as immutable artifacts, tracks metadata, and lets you retrieve them later by **name or hash**. The goal is to make experiments easier to reproduce without introducing heavy infrastructure.
 
@@ -22,7 +22,7 @@ Hash      Name         Tag   Message
 c8a2f8e1  people_raw   raw   tiny dataset
 ```
 
-# Why DataShelf?
+# Why Datashelf?
 
 Many data science workflows struggle with dataset organization:
 
@@ -39,7 +39,7 @@ data_final_v2.csv
 data_final_really_final.csv
 ```
 
-DataShelf stores datasets using **content hashes** and maintains a metadata registry so artifacts can always be located again.
+Datashelf stores datasets using **content hashes** and maintains a metadata registry so artifacts can always be located again.
 
 Key ideas:
 
@@ -78,7 +78,7 @@ I am also working on getting it published on PyPi!
 
 # Quick Start
 
-Initialize a DataShelf repository in your project directory:
+Initialize a Datashelf repository in your project directory:
 
 ```bash
 datashelf init
@@ -133,7 +133,7 @@ datashelf checkout people_raw exports/people.parquet
 
 # Python API
 
-DataShelf can also be used directly from Python:
+Datashelf can also be used directly from Python:
 
 ```python
 import datashelf as ds
@@ -152,7 +152,7 @@ df = ds.load("training_data", to_df=True)
 
 # Architecture
 
-DataShelf separates **user commands** from **internal system services**.
+Datashelf separates **user commands** from **internal system services**.
 
 ```
 User / CLI
@@ -210,7 +210,7 @@ This ensures datasets can always be referenced reliably.
 
 # Comparison
 
-DataShelf focuses on **simple, local dataset tracking**.
+Datashelf focuses on **simple, local dataset tracking**.
 
 | Tool      | Purpose                                             |
 | --------- | --------------------------------------------------- |
@@ -218,7 +218,7 @@ DataShelf focuses on **simple, local dataset tracking**.
 | DVC       | Full data version control with remote storage       |
 | Git LFS   | Large file versioning inside Git                    |
 
-DataShelf intentionally avoids:
+Datashelf intentionally avoids:
 
 * Git integration
 * remote storage
@@ -252,7 +252,7 @@ MIT License.
 
 # About This Project
 
-DataShelf was built as a personal project to **make something that I thought would be useful in my day-to-day work at school**.
+Datashelf was built as a personal project to **make something that I thought would be useful in my day-to-day work at school**.
 
 The project demonstrates:
 

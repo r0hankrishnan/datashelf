@@ -23,7 +23,7 @@ def init_command(args):
             init()
         return 0
     except Exception as e:
-        print(f"Error initializing datashelf directory: {e}", file=sys.stderr)
+        print(f"Error initializing Datashelf directory: {e}", file=sys.stderr)
         return 1
 
 
@@ -151,17 +151,17 @@ def main():
 
     # Init command
     init_parser = subparsers.add_parser(
-        "init", help="Initialize a datashelf directory."
+        "init", help="Initialize a Datashelf directory."
     )
     init_parser.add_argument(
         "--path",
         type=str,
-        help="Optional path to initialize the datashelf directory. If not provided, the datashelf directory will be initialized in the current working directory.",
+        help="Optional path to initialize the Datashelf directory. If not provided, the Datashelf directory will be initialized in the current working directory.",
     )
     init_parser.set_defaults(func=init_command)
 
     # Save command
-    save_parser = subparsers.add_parser("save", help="Save a file to the datashelf.")
+    save_parser = subparsers.add_parser("save", help="Save a file to the Datashelf.")
     save_parser.add_argument(
         "file_path", type=str, help="The path to the file to be saved."
     )

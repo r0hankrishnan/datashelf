@@ -22,7 +22,7 @@ def init(custom_path: str | None = None):
         datashelf_path: Path = Path(custom_path) / ".datashelf"
 
         if init_datashelf_directory(datashelf_path=datashelf_path):
-            print(f"Initialized DataShelf at {str(datashelf_path)}")
+            print(f"Initialized Datashelf at {str(datashelf_path)}")
             init_config(datashelf_path=datashelf_path)
             init_metadata(datashelf_path=datashelf_path)
 
@@ -31,6 +31,6 @@ def init(custom_path: str | None = None):
         datashelf_path: Path = cwd / ".datashelf"
 
         if init_datashelf_directory(datashelf_path=datashelf_path):
-            print(f"Initialized DataShelf at {str(datashelf_path)}")
+            print(f"Initialized Datashelf at {str(datashelf_path)}")
             init_config(datashelf_path=datashelf_path)
             init_metadata(datashelf_path=datashelf_path)

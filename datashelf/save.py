@@ -57,7 +57,7 @@ def save(data: pd.DataFrame | str | Path, name: str, message: str, tag: str) -> 
 
             elif entry["file_hash"] == data_hash and entry["tag"] != tag:
                 msg = (
-                    "This data already exists in .datashelf under a different tag with the following metadata:\n\n"
+                    "This data already exists in .datashelf/ under a different tag with the following metadata:\n\n"
                     f"\t- Hash: {entry['file_hash'][:8] + '...'}\n\t- Name: {entry['name']}\n\t- Message: {entry['message']}"
                     f"\n\t- Tag: {entry['tag']}\n\n"
                     "Would you like to update the metadata of this entry with the following metadata? (Y/N)\n\n"

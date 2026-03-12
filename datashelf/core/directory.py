@@ -11,7 +11,7 @@ def init_datashelf_directory(datashelf_path: Path) -> bool:
     """
     # Check if datashelf already exists at path -> else make .datashelf/ directory
     if datashelf_path.exists():  # should this raise an exception?
-        print(f"Datasehlf already initialized at {str(datashelf_path)}")
+        print(f"Datashelf already initialized at {str(datashelf_path)}")
         return False
 
     else:
@@ -36,8 +36,8 @@ def find_datashelf_path() -> Path:
             curr_path = curr_path.parent
 
     msg = (
-        "No DataShelf repository found. "
-        "DataShelf searches upward from the current directory for a '.datashelf' folder.\n\n"
+        "No Datashelf repository found. "
+        "Datashelf searches upward from the current directory for a '.datashelf' folder.\n\n"
         "Searched upwards from:\n"
         f"{curr_path}\n\n"
         "If it exists in a subdirectory (e.g. data/.datashelf), run this command there."
