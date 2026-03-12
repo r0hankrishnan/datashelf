@@ -1,8 +1,0 @@
-config:
-  enforce_ccds_tags: true
-  allowed_tags:
-  - raw
-  - external
-  - intermediate
-  - processed
-  parquet_engine: fastparquet

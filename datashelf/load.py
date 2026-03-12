@@ -4,56 +4,90 @@ from datashelf.core.directory import find_datashelf_path
 from datashelf.core.metadata import load_metadata
 from datashelf.core.config import get_parquet_engine
 
-def load(lookup_key: str, to_df: bool = False) -> Path | pd.DataFrame:
-    datashelf_path = find_datashelf_path()
-    metadata = load_metadata(datashelf_path = datashelf_path)
-        
-    name_matches = [file_entry for file_entry in metadata["files"] if file_entry["name"] == lookup_key]
-    hash_approx_match = [file_entry for file_entry in metadata["files"] 
-                         if file_entry["file_hash"].startswith(lookup_key) and file_entry["file_hash"] != lookup_key]
-    hash_exact_match = [file_entry for file_entry in metadata["files"] if file_entry["file_hash"] == lookup_key]
 
-    
+def load(lookup_key: str, to_df: bool = False) -> Path | pd.DataFrame:
+    """Load a stored artifact from the datashelf.
+    The lookup key can be a dataset name, full hash, or unique hash prefix.
+    If multiple matches are found for the lookup key, an error will be raised to prompt the user to provide a more specific lookup key.
+
+    Args:
+        lookup_key (str): Dataset name, full hash, or unique hash prefix to look up in the metadata.
+        to_df (bool, optional): Whether to load the artifact into a pandas DataFrame. Defaults to False.
+
+    Raises:
+        ValueError: If no matching dataset is found.
+        ValueError: If multiple matching datasets are found.
+        RuntimeError: If an unexpected state is encountered.
+
+    Returns:
+        Path | pd.DataFrame: The path to the loaded artifact or a pandas DataFrame containing the artifact data.
+    """
+    datashelf_path = find_datashelf_path()
+    metadata = load_metadata(datashelf_path=datashelf_path)
+
+    name_matches = [
+        file_entry
+        for file_entry in metadata["files"]
+        if file_entry["name"] == lookup_key
+    ]
+    hash_approx_match = [
+        file_entry
+        for file_entry in metadata["files"]
+        if file_entry["file_hash"].startswith(lookup_key)
+        and file_entry["file_hash"] != lookup_key
+    ]
+    hash_exact_match = [
+        file_entry
+        for file_entry in metadata["files"]
+        if file_entry["file_hash"] == lookup_key
+    ]
+
     # First check name, then approx hash, then exact hash
-    if len(name_matches) == 0 and len(hash_exact_match) == 0 and len(hash_approx_match) == 0:
-        raise ValueError(f"No match found for {lookup_key}. Use the `list` command to see available datasets in .datashelf/.")
-    
-    elif len(name_matches) > 1:
-        msg = (
-            f"More than one match found for {lookup_key}:"
+    if (
+        len(name_matches) == 0
+        and len(hash_exact_match) == 0
+        and len(hash_approx_match) == 0
+    ):
+        raise ValueError(
+            f"No match found for {lookup_key}. Use the `list` command to see available datasets in .datashelf/."
         )
-        
+
+    elif len(name_matches) > 1:
+        msg = f"More than one match found for {lookup_key}:"
+
         for file_entry in name_matches:
-            msg += (f"\n\nFile Hash: {file_entry['file_hash']} | Name: {file_entry['name']} | Message: {file_entry['message']} | "
-                    f"Tag: {file_entry['tag']}")
-        
+            msg += (
+                f"\n\nFile Hash: {file_entry['file_hash']} | Name: {file_entry['name']} | Message: {file_entry['message']} | "
+                f"Tag: {file_entry['tag']}"
+            )
+
         msg += "Please refer to the entries above, copy the appropriate file hash, and run `load` again with the file hash."
         raise ValueError(msg)
-        
+
     elif len(name_matches) == 1:
         file_entry = name_matches[0]
-    
+
     elif len(hash_approx_match) > 1:
-        msg = (
-            f"More than one match found for {lookup_key}:"
-        )
-        
+        msg = f"More than one match found for {lookup_key}:"
+
         for file_entry in hash_approx_match:
-            msg += (f"\n\nFile Hash: {file_entry['file_hash']} | Name: {file_entry['name']} | Message: {file_entry['message']} | "
-                    f"Tag: {file_entry['tag']}")
-        
+            msg += (
+                f"\n\nFile Hash: {file_entry['file_hash']} | Name: {file_entry['name']} | Message: {file_entry['message']} | "
+                f"Tag: {file_entry['tag']}"
+            )
+
         msg += "\n\nPlease refer to the entries above, copy the appropriate file hash, and run `load` again with the file hash."
         raise ValueError(msg)
-        
-    elif len(hash_approx_match) ==1:
+
+    elif len(hash_approx_match) == 1:
         file_entry = hash_approx_match[0]
-        
+
     elif len(hash_exact_match) == 1:
         file_entry = hash_exact_match[0]
-    
+
     else:
         raise RuntimeError(f"Unreachable state in `load()`.")
-    
-    engine = get_parquet_engine(datashelf_path = datashelf_path)
+
+    engine = get_parquet_engine(datashelf_path=datashelf_path)
     full_path = datashelf_path / file_entry["stored_path"]
-    return full_path if not to_df else pd.read_parquet(full_path, engine = engine)
+    return full_path if not to_df else pd.read_parquet(full_path, engine=engine)
