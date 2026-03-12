@@ -1,6 +1,6 @@
 # Datashelf
 
-![datashelf logo](./assets/datashelf.svg)
+![datashelf logo](./assets/ds.svg)
 
 Datashelf is a lightweight **local dataset tracking tool** for data science projects.
 
