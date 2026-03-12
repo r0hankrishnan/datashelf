@@ -1,22 +1,85 @@
+import pandas as pd
+import shutil
 from pathlib import Path
-import yaml
-from datetime import datetime
+from tempfile import TemporaryDirectory
+from datashelf.core.config import get_config_tags_settings, validate_tags, get_parquet_engine
+from datashelf.core.directory import find_datashelf_path
+from datashelf.core.hashing import sha256_hex, make_temp_parquet
+from datashelf.core.metadata import load_metadata, _atomic_write_json, create_file_entry, _get_current_timestamp
 
-# Save only used INSIDE a jupyter notebook -> otherwise would use load in CLI
-# To save a dataset:
-    # Compile user-generated info like 
+def save(data:pd.DataFrame | str | Path, name:str, message:str, tag:str) -> None:
+    datashelf_path: Path = find_datashelf_path()
     
-def _get_file_names(datashelf_path:Path):
-    # Make sure path exists
-    if not datashelf_path.exists():
-        raise FileNotFoundError(f"No .datashelf directory found at {datashelf_path}")
+    tag_validation_enforced, allowed_tags = get_config_tags_settings(datashelf_path = datashelf_path)
+    if tag_validation_enforced:
+        validate_tags(tag = tag, allowed_tags = allowed_tags)
     
-    # Load YAML and compile list of file names
-    with open(".datashelf/metadata.yaml", "r") as f:
-        metadata = yaml.safe_load(f)
+    # Open a temporary directory for hash validation and metadata update processes
+    with TemporaryDirectory(dir = datashelf_path) as t_dir:
+        temp_dir = Path(t_dir)
+        temp_dir.mkdir(parents = True, exist_ok = True)
+        temp_data_path = temp_dir / "data.parquet"
+        
+        engine = get_parquet_engine(datashelf_path = datashelf_path)
+        make_temp_parquet(data = data, output_path = temp_data_path, engine = engine)
+        data_hash = sha256_hex(data_path = temp_data_path)
+        
+        metadata = load_metadata(datashelf_path = datashelf_path)
+        metadata_path = datashelf_path / "metadata.json"
+
+        # Check if hash already exists in metadata["files"]
+        for entry in metadata["files"]:
+            if entry["file_hash"] == data_hash and entry["tag"] == tag:
+                print(f"Data {name} already exists in .datashelf with hash {entry['file_hash']}.")
+                return
+            
+            elif entry["file_hash"] == data_hash and entry["tag"] != tag:                
+                msg = (
+                    "This data already exists in .datashelf under a different tag with the following metadata:\n\n"
+                    f"\t-Hash: {entry['file_hash'][:8]}\n\t-Name: {entry['name']}\n\t-Message: {entry['message']}\n\t-Tag: {entry['tag']}\n\n"
+                    "Would you like to update the metadata of this entry with the following metadata? (Y/N)\n\n"
+                    f"\t-New Name: {name}\n\tNew Message: {message}\n\t-New Tag: {tag}\n"
+                )
+                response = input(msg)
+                    
+                valid_response = True if response.lower() in ["y", "n", "yes", "no"] else False
+                
+                while not valid_response:
+                    if not valid_response:
+                        response = input("Invalid response. Please enter Y or N. ")
+                        valid_response = True if response.lower() in ["y", "n", "yes", "no"] else False
+
+                if response.lower() in ["y", "yes"]:
+                    # Update
+                    metadata["last_modified"] = _get_current_timestamp()
+                    entry["name"] = name
+                    entry["message"] = message
+                    entry["tag"] = tag
+                    
+                    _atomic_write_json(path = metadata_path, obj = metadata)
+                    
+                    print(f"Updated metadata for existing artifact {data_hash[:8]}.")
+                    return
+                    
+                else:
+                    print("No changes made.")
+                    return
+            
+            else:
+                continue
+
+        artifacts_dir = datashelf_path / "artifacts"
+        artifacts_dir.mkdir(parents=True, exist_ok=True)
+
+        full_stored_path = artifacts_dir / f"{data_hash}.parquet"
+        stored_path = f"artifacts/{data_hash}.parquet"
+
+        shutil.move(str(temp_data_path), str(full_stored_path))        
+
+        data_file_entry = create_file_entry(file_hash = data_hash, name = name, stored_path = stored_path, message = message, tag = tag)
+        metadata["last_modified"] = _get_current_timestamp()
+        metadata["files"].append(data_file_entry)
+        
+        _atomic_write_json(path = metadata_path, obj = metadata)
     
-    file_list = []
-    for file in metadata["Files"]:
-        file_list.append(file["File Name"])
-    
-    return file_list[]
+    print(f"Successfully saved '{name}' with hash {data_hash[:8]}.")
