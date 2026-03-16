@@ -1,36 +1,24 @@
 # Datashelf
 
+**Lightweight local dataset tracking for data science projects.**
+
 ![datashelf logo](./assets/ds.svg)
 
-Datashelf is a lightweight **local dataset tracking tool** for data science projects.
-
-It stores tabular datasets as immutable artifacts, tracks metadata, and lets you retrieve them later by **name or hash**. The goal is to make experiments easier to reproduce without introducing heavy infrastructure.
-
-## Example
+Stop naming files `data_final_really_final.csv`. Datashelf stores tabular datasets as immutable artifacts and lets you retrieve them by name or hash — so your experiments stay reproducible without any heavy infrastructure.
 
 ```bash
-$ datashelf init
-Initialized DataShelf at .datashelf/
+$ datashelf save data/people.csv people_raw --message "initial load" --tag raw
+Successfully saved 'people_raw' (hash: c8a2f8e1)
 
-$ datashelf save data/people.csv people_raw --message "tiny dataset" --tag raw
-Successfully saved 'people_raw' with hash c8a2f8e1
-
-$ datashelf list
-
-Hash      Name         Tag   Message
------------------------------------------
-c8a2f8e1  people_raw   raw   tiny dataset
+$ datashelf load people_raw --df
+# Returns a pandas DataFrame, ready to use
 ```
 
-# Why Datashelf?
+---
 
-Many data science workflows struggle with dataset organization:
+## Why Datashelf?
 
-* intermediate datasets get overwritten
-* multiple versions accumulate
-* experiments become difficult to reproduce
-
-Instead of accumulating files like:
+Data science projects often accumulates files like this:
 
 ```
 data.csv
@@ -39,227 +27,132 @@ data_final_v2.csv
 data_final_really_final.csv
 ```
 
-Datashelf stores datasets using **content hashes** and maintains a metadata registry so artifacts can always be located again.
+Datashelf replaces that chaos with **content-addressed storage**: each dataset is hashed (SHA256), stored once as Parquet, and registered with metadata; and if you try to save a duplicate, Datashelf tells you. You can always get your data back by name or hash prefix. 
 
-Key ideas:
+---
 
-* **content-addressed storage** (SHA256)
-* **metadata registry** for datasets
-* lookup by **name or hash prefix**
-* **CLI + Python API**
-* **opinionated dataset tags** based on Cookiecutter Data Science
-
-It is intentionally **local and lightweight**, designed for individual projects rather than large data pipelines.
-
-# Features
-
-* Local dataset artifact storage
-* SHA256 content hashing
-* Metadata registry (name, tag, message, timestamp)
-* Lookup by dataset name or hash prefix
-* Optional dataset tags and messages
-* CLI + Python API
-* Automatic normalization to Parquet
-* Duplicate dataset detection
-* Basic unit test coverage
-
-
-# Installation
-
-Clone the repository and install locally:
+## Installation
 
 ```bash
-git clone <repo-url>
-cd datashelf
-pip install -e .
+pip install git+https://github.com/r0hankrishnan/datashelf.git
 ```
 
-I am also working on getting it published on PyPi!
+> PyPI release coming soon.
 
-# Quick Start
+---
 
-Initialize a Datashelf repository in your project directory:
+## Quick Start
 
 ```bash
+# Initialize in your project directory
 datashelf init
+
+# Save a dataset
+datashelf save data/people.csv people_raw --message "initial load" --tag raw
+
+# List what's stored
+datashelf list
+
+# Load it back into pandas
+datashelf load people_raw --df
 ```
 
-This creates a hidden directory used to store artifacts and metadata:
+Or use the Python API:
+
+```python
+import datashelf as ds
+
+ds.init()
+ds.save("data/people.csv", name="people_raw", message="initial load", tag="raw")
+df = ds.load("people_raw", to_df=True)
+```
+
+---
+
+## Commands
+
+| Command | Description |
+|---|---|
+| `datashelf init` | Initialize a `.datashelf/` repo in the current directory (recommended to intialize in your project's root) |
+| `datashelf save <path> <name>` | Store a dataset artifact |
+| `datashelf list` | List all stored datasets |
+| `datashelf show <name>` | Inspect metadata for a dataset |
+| `datashelf load <name>` | Print the artifact path (use `--df` to load into pandas) |
+| `datashelf checkout <name> <dest>` | Export an artifact to another location |
+
+---
+
+## How It Works
+
+When you save a dataset, Datashelf:
+
+1. Computes a SHA256 hash of the file contents
+2. Normalizes it to Parquet and stores it at `.datashelf/artifacts/<hash>.parquet`
+3. Registers metadata (name, tag, message, timestamp) in `.datashelf/metadata.json`
+
+If you try to save the same data again under a different name, Datashelf detects the duplicate and asks if you want to update the metadata instead of storing a redundant copy.
 
 ```
 .datashelf/
 ├── config.yaml
 ├── metadata.json
 └── artifacts/
+    └── c8a2f8e1...parquet
 ```
 
-# Example Workflow
+---
 
-Save a dataset:
+## Design Philosophy
+Datashelf deliberately tracks only tabular data. The core of the tool is duplicate detection and easy data organization: before storing anything, Datashelf checks whether you've already saved that data under a different name. For that check to work reliably, every dataset needs to be in a canonical format — you can't meaningfully compare a CSV and a Parquet of the same table without normalizing them first. I chose Parquet as the canoncial format for its size benefits.
 
-```bash
-datashelf save data/people.csv people_raw --message "tiny dataset" --tag raw
-```
+Accepting only tabular data is the direct consequence of that decision. It also makes future features like dataset diffing coherent — diffing only makes sense when you can compare rows and columns. Trying to extend Datashelf to handle images, audio, or arbitrary binary files would undermine both of those things without adding much value over a general-purpose tool like DVC.
 
-List stored datasets:
+The scope is intentionally narrow: Datashelf does one thing well for one kind of data.
 
-```bash
-datashelf list
-```
+---
 
-Inspect metadata:
+## Comparison
 
-```bash
-datashelf show people_raw
-```
+| Tool | Best for |
+|---|---|
+| **Datashelf** | Lightweight local dataset tracking on a single project |
+| DVC | Full data version control with remote storage and pipeline orchestration |
+| Git LFS | Large file versioning inside a Git repository |
 
-Load the stored dataset path:
+Datashelf intentionally has no Git integration, no remote storage, and no pipeline orchestration. It's small and it stays out of your way.
 
-```bash
-datashelf load people_raw
-```
+---
 
-Load directly into pandas:
+## Supported File Types
 
-```bash
-datashelf load people_raw --df
-```
+Datashelf accepts `.csv`, `.parquet`, `.xlsx`, and `.json` files and normalizes everything to Parquet internally.
 
-Export the artifact to another location:
+---
 
-```bash
-datashelf checkout people_raw exports/people.parquet
-```
-
-# Python API
-
-Datashelf can also be used directly from Python:
-
-```python
-import datashelf as ds
-
-ds.init()
-
-ds.save(
-    data="data.csv",
-    name="training_data",
-    message="clean dataset",
-    tag="processed"
-)
-
-df = ds.load("training_data", to_df=True)
-```
-
-# Architecture
-
-Datashelf separates **user commands** from **internal system services**.
-
-```
-User / CLI
-    │
-    ▼
-Command Layer
-(init, save, load, inspect, checkout)
-    │
-    ▼
-Core Services
-(directory, hashing, metadata, config)
-    │
-    ▼
-.datashelf/
-    artifacts + metadata registry
-```
-
-### Command Layer
-
-Handles user workflows such as saving, loading, inspecting, and exporting datasets.
-
-### Core Layer
-
-Implements internal functionality including:
-
-* content hashing
-* metadata management
-* artifact storage
-* configuration management
-
-This separation keeps command modules simple and makes core logic easier to test and maintain.
-
-# How Artifacts Are Stored
-
-Datasets are stored using their **SHA256 hash**:
-
-```
-.datashelf/artifacts/<hash>.parquet
-```
-
-Metadata is stored in a registry:
-
-```json
-{
-  "file_hash": "c8a2f8e1...",
-  "name": "people_raw",
-  "tag": "raw",
-  "message": "tiny dataset",
-  "stored_path": "artifacts/c8a2f8e1.parquet",
-  "datetime_added": "2026-03-10T12:30:00"
-}
-```
-
-This ensures datasets can always be referenced reliably.
-
-# Comparison
-
-Datashelf focuses on **simple, local dataset tracking**.
-
-| Tool      | Purpose                                             |
-| --------- | --------------------------------------------------- |
-| DataShelf | Lightweight local dataset tracking for tabular data |
-| DVC       | Full data version control with remote storage       |
-| Git LFS   | Large file versioning inside Git                    |
-
-Datashelf intentionally avoids:
-
-* Git integration
-* remote storage
-* pipeline orchestration
-
-This keeps the tool simple and easy to use for smaller data science projects.
-
-# Running Tests
-
-Run tests with:
+## Running Tests
 
 ```bash
 pytest
 ```
 
-Tests cover repository initialization, dataset saving, loading, metadata inspection, and artifact checkout.
+---
 
-# Future Work
+## Roadmap
 
-Possible extensions include:
+- [ ] PyPI release
+- [ ] Dataset diffing
+- [ ] Experiment tracking
+- [ ] Dataset lineage
+- [ ] Remote artifact storage
 
-* dataset diffing
-* experiment tracking
-* dataset lineage tracking
-* remote artifact storage
-* richer filtering and search
+---
 
-# License
+## License
 
-MIT License.
+MIT — see [LICENSE](./LICENSE).
 
-# About This Project
+---
 
-Datashelf was built as a personal project to **make something that I thought would be useful in my day-to-day work at school**.
+## Contributing
 
-The project demonstrates:
-
-* CLI tool development
-* artifact-based dataset management
-* modular Python package architecture
-* reproducible data pipelines
-* test-driven development
-
-
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
