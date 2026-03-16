@@ -103,7 +103,7 @@ If you try to save the same data again under a different name, Datashelf detects
 ---
 
 ## Design Philosophy
-Datashelf deliberately tracks only tabular data. The core of the tool is duplicate detection and easy data organization: before storing anything, Datashelf checks whether you've already saved that data under a different name. For that check to work reliably, every dataset needs to be in a canonical format — you can't meaningfully compare a CSV and a Parquet of the same table without normalizing them first. I chose Parquet as the canoncial format for its size benefits.
+Datashelf deliberately tracks only tabular data. The core of the tool is duplicate detection and easy data organization: before storing anything, Datashelf checks whether you've already saved that data under a different name. For that check to work reliably, every dataset needs to be in a canonical format — you can't meaningfully compare a CSV and a Parquet of the same table without normalizing them first. I chose Parquet as the canonical format for its size benefits.
 
 Accepting only tabular data is the direct consequence of that decision. It also makes future features like dataset diffing coherent — diffing only makes sense when you can compare rows and columns. Trying to extend Datashelf to handle images, audio, or arbitrary binary files would undermine both of those things without adding much value over a general-purpose tool like DVC.
 
