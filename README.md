@@ -33,12 +33,17 @@ Datashelf replaces that chaos with **content-addressed storage**: each dataset i
 
 ## Installation
 
+**Datashelf is now available on PyPI!** You can see it's package page [here](https://pypi.org/project/datashelf-py/). Follow the installation isntructions below to easily install Datashelf from PyPI:
+
+```bash
+python3 -m pip install datashelf-py
+```
+
+If you don't want to install from PyPi:
+
 ```bash
 pip install git+https://github.com/r0hankrishnan/datashelf.git
 ```
-
-> PyPI release coming soon.
-
 ---
 
 ## Quick Start
