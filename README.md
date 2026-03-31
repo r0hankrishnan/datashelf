@@ -144,7 +144,7 @@ pytest
 
 ## Roadmap
 
-- [ ] PyPI release
+- [x] PyPI release
 - [ ] Dataset diffing
 - [ ] Experiment tracking
 - [ ] Dataset lineage
