@@ -26,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ---
 
-## [0.1.2] — TBD
+## [0.1.2] — March 19, 2026
 
 ### Added
 - `show` command: detailed per-entry metadata display via name or hash prefix
@@ -38,7 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ---
 
-## [0.1.1] — TBD
+## [0.1.1] — March 19, 2026
 
 ### Added
 - CLI support for `init`, `save`, `load`, `list`, `show`, and `checkout` commands
@@ -51,7 +51,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ---
 
-## [0.1.0] — TBD
+## [0.1.0] — March 19, 2026
 
 ### Added
 - Initial release of core versioning functionality
