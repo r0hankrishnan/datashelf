@@ -10,8 +10,7 @@ def init_datashelf_directory(datashelf_path: Path) -> bool:
         datashelf_path (Path): Path to check.
     """
     # Check if datashelf already exists at path -> else make .datashelf/ directory
-    if datashelf_path.exists():  # should this raise an exception?
-        print(f"Datashelf already initialized at {str(datashelf_path)}")
+    if datashelf_path.exists(): # .datashelf already initialized -> return False
         return False
 
     else:
