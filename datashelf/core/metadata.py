@@ -41,7 +41,7 @@ def init_metadata(datashelf_path: Path):
 
     metadata = {
         "schema_version": "1.0",
-        "last_modified": _get_current_timestamp(),
+        "last_modified": get_current_timestamp(),
         "files": [],
     }
 
@@ -57,7 +57,7 @@ def create_file_entry(
         "stored_path": stored_path,
         "message": message,
         "tag": tag,
-        "datetime_added": _get_current_timestamp(),
+        "datetime_added": get_current_timestamp(),
     }
 
     return file_entry
@@ -102,11 +102,7 @@ def load_metadata(datashelf_path: Path) -> dict:
 
     return metadata_json
 
-
-# =============================================================
-# HELPER FUNCTIONS
-# =============================================================
-def _get_current_timestamp() -> str:
+def get_current_timestamp() -> str:
     """
     Returns the current datetime in ISO 8601 format
 
@@ -115,6 +111,13 @@ def _get_current_timestamp() -> str:
     """
     return datetime.now().replace(microsecond=0).isoformat()
 
+def update_metadata(path: Path, obj: dict) -> None:
+    _atomic_write_json(path = path, obj = obj)
+
+
+# =============================================================
+# HELPER FUNCTIONS
+# =============================================================
 
 def _atomic_write_text(path: Path, text: str) -> None:
     """

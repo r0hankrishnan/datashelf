@@ -11,9 +11,9 @@ from datashelf.core.directory import find_datashelf_path
 from datashelf.core.hashing import sha256_hex, make_temp_parquet
 from datashelf.core.metadata import (
     load_metadata,
-    _atomic_write_json,
+    update_metadata,
     create_file_entry,
-    _get_current_timestamp,
+    get_current_timestamp,
 )
 
 
@@ -80,12 +80,12 @@ def save(data: pd.DataFrame | str | Path, name: str, message: str, tag: str) -> 
 
                 if response.lower() in ["y", "yes"]:
                     # Update
-                    metadata["last_modified"] = _get_current_timestamp()
+                    metadata["last_modified"] = get_current_timestamp()
                     entry["name"] = name
                     entry["message"] = message
                     entry["tag"] = tag
 
-                    _atomic_write_json(path=metadata_path, obj=metadata)
+                    update_metadata(path=metadata_path, obj=metadata)
 
                     print(f"Updated metadata for existing artifact {data_hash[:8]}.")
                     return
@@ -112,9 +112,9 @@ def save(data: pd.DataFrame | str | Path, name: str, message: str, tag: str) -> 
             message=message,
             tag=tag,
         )
-        metadata["last_modified"] = _get_current_timestamp()
+        metadata["last_modified"] = get_current_timestamp()
         metadata["files"].append(data_file_entry)
 
-        _atomic_write_json(path=metadata_path, obj=metadata)
+        update_metadata(path=metadata_path, obj=metadata)
 
     print(f"Successfully saved '{name}' with hash {data_hash[:8]}.")
