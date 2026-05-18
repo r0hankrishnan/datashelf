@@ -3,8 +3,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from datetime import datetime
-from datashelf.core.config import get_config_tags_settings, validate_tags
-from datashelf.core.hashing import sha256_hex
 from typing import TypedDict, Optional
 from tempfile import NamedTemporaryFile
 
@@ -36,8 +34,6 @@ def init_metadata(datashelf_path: Path):
         datashelf_path (Path): Path to the .datashelf directory
     """
     metadata_path = str(datashelf_path / "metadata.json")
-    config_path = datashelf_path / "config.yaml"
-    config_hash = sha256_hex(data_path=config_path)
 
     metadata = {
         "schema_version": "1.0",
@@ -112,6 +108,14 @@ def get_current_timestamp() -> str:
     return datetime.now().replace(microsecond=0).isoformat()
 
 def update_metadata(path: Path, obj: dict) -> None:
+    """Thin public wrapper over _atomic_write_json().
+    Potential to add further metadata validation into this function
+    to simplify user-facing API.
+
+    Args:
+        path (Path): Path of metadata
+        obj (dict): Dict of entry to append to metadata.
+    """
     _atomic_write_json(path = path, obj = obj)
 
 
