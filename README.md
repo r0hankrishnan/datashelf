@@ -1,10 +1,10 @@
-# Datashelf
+# DataShelf
 
 **Lightweight local dataset tracking for data science projects.**
 
 ![datashelf logo](https://raw.githubusercontent.com/r0hankrishnan/datashelf/main/assets/DataShelf_logo.png)
 
-Stop naming files `data_final_really_final.csv`. Datashelf stores tabular datasets as immutable artifacts and lets you retrieve them by name or hash — so your experiments stay reproducible without any heavy infrastructure.
+Stop naming files `data_final_really_final.csv`. DataShelf stores tabular datasets as immutable artifacts and lets you retrieve them by name or hash — so your experiments stay reproducible without any heavy infrastructure.
 
 ```bash
 $ datashelf save data/people.csv people_raw --message "initial load" --tag raw
@@ -16,7 +16,7 @@ $ datashelf load people_raw --df
 
 ---
 
-## Why Datashelf?
+## Why DataShelf?
 
 Data science projects often accumulates files like this:
 
@@ -27,13 +27,13 @@ data_final_v2.csv
 data_final_really_final.csv
 ```
 
-Datashelf replaces that chaos with **content-addressed storage**: each dataset is hashed (SHA256), stored once as Parquet, and registered with metadata; and if you try to save a duplicate, Datashelf tells you. You can always get your data back by name or hash prefix. 
+DataShelf replaces that chaos with **content-addressed storage**: each dataset is hashed (SHA256), stored once as Parquet, and registered with metadata; and if you try to save a duplicate, DataShelf tells you. You can always get your data back by name or hash prefix. 
 
 ---
 
 ## Installation
 
-**Datashelf is now available on PyPI!** You can see it's package page [here](https://pypi.org/project/datashelf-py/). Follow the installation isntructions below to easily install Datashelf from PyPI:
+**DataShelf is now available on PyPI!** You can see it's package page [here](https://pypi.org/project/datashelf-py/). Follow the installation isntructions below to easily install DataShelf from PyPI:
 
 ```bash
 python3 -m pip install datashelf-py
@@ -89,13 +89,13 @@ df = ds.load("people_raw", to_df=True)
 
 ## How It Works
 
-When you save a dataset, Datashelf:
+When you save a dataset, DataShelf:
 
 1. Computes a SHA256 hash of the file contents
 2. Normalizes it to Parquet and stores it at `.datashelf/artifacts/<hash>.parquet`
 3. Registers metadata (name, tag, message, timestamp) in `.datashelf/metadata.json`
 
-If you try to save the same data again under a different name, Datashelf detects the duplicate and asks if you want to update the metadata instead of storing a redundant copy.
+If you try to save the same data again under a different name, DataShelf detects the duplicate and asks if you want to update the metadata instead of storing a redundant copy.
 
 ```
 .datashelf/
@@ -108,29 +108,26 @@ If you try to save the same data again under a different name, Datashelf detects
 ---
 
 ## Design Philosophy
-Datashelf deliberately tracks only tabular data. The core of the tool is duplicate detection and easy data organization: before storing anything, Datashelf checks whether you've already saved that data under a different name. For that check to work reliably, every dataset needs to be in a canonical format — you can't meaningfully compare a CSV and a Parquet of the same table without normalizing them first. I chose Parquet as the canonical format for its size benefits.
+DataShelf deliberately tracks only tabular data. The core of the tool is duplicate detection and easy data organization: before storing anything, DataShelf checks whether you've already saved that data under a different name. For that check to work reliably, every dataset needs to be in a canonical format — you can't meaningfully compare a CSV and a Parquet of the same table without normalizing them first. I chose Parquet as the canonical format for its size benefits.
 
-Accepting only tabular data is the direct consequence of that decision. It also makes future features like dataset diffing coherent — diffing only makes sense when you can compare rows and columns. Trying to extend Datashelf to handle images, audio, or arbitrary binary files would undermine both of those things without adding much value over a general-purpose tool like DVC.
-
-The scope is intentionally narrow: Datashelf does one thing well for one kind of data.
-
+Accepting only tabular data is the direct consequence of that decision. It also makes future features like dataset diffing coherent — diffing only makes sense when you can compare rows and columns. Trying to extend DataShelf to handle images, audio, or arbitrary binary files would undermine both of those things without adding much value over a general-purpose tool like DVC.
 ---
 
 ## Comparison
 
 | Tool | Best for |
 |---|---|
-| **Datashelf** | Lightweight local dataset tracking on a single project |
+| **DataShelf** | Lightweight local dataset tracking on a single project |
 | DVC | Full data version control with remote storage and pipeline orchestration |
 | Git LFS | Large file versioning inside a Git repository |
 
-Datashelf intentionally has no Git integration, no remote storage, and no pipeline orchestration. It's small and it stays out of your way.
+DataShelf intentionally has no Git integration, no remote storage, and no pipeline orchestration. It's small and stays out of your way.
 
 ---
 
 ## Supported File Types
 
-Datashelf accepts `.csv`, `.parquet`, `.xlsx`, and `.json` files and normalizes everything to Parquet internally.
+DataShelf accepts `.csv`, `.parquet`, `.xlsx`, and `.json` files and normalizes everything to Parquet internally.
 
 ---
 
@@ -145,10 +142,14 @@ pytest
 ## Roadmap
 
 - [x] PyPI release
+
+**WIP for 0.2.0 release!**
+- [x] Rich ouptut
+- [x] Non-input()-based handling of duplicate metadata entries
 - [ ] Dataset diffing
-- [ ] Experiment tracking
 - [ ] Dataset lineage
-- [ ] Remote artifact storage
+- [ ] Optional interactive CLI
+- [ ] Delete functions (Python API + CLI)
 
 ---
 
