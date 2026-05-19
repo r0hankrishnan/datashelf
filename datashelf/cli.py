@@ -1,9 +1,8 @@
 import argparse
 import sys
-from pathlib import Path
 
 from datashelf import init, save, checkout, ls, show, load
-from datashelf.core.display import print_success, print_error, print_message, print_table
+from datashelf.core.display import print_success, print_error, print_message, print_table, print_entry_detail
 from datashelf.load import AmbiguousLookupError
 
 
@@ -96,63 +95,108 @@ def load_command(args):
 
 
 def ls_command(args):
-    """List files currently registered in the datashelf.
+    """Return all dataset entries currently registered in .datashelf.
+
+    Optionally filters entries by one or more tags. If tag enforcement is enabled
+    in config, filter tags are validated against the allowed tags list before filtering.
 
     Args:
-        args: The arguments passed from the command line. It should contain:
-            - filter_tag (list[str] | str | None, optional): Optional tag or tags used to
-              filter displayed metadata entries.
+        filter_tag (list[str] | str | None, optional): Tag or list of tags to filter 
+            entries by. If None, all entries are returned. Defaults to None.
+
+    Raises:
+        ValueError: If tag enforcement is enabled and a provided filter tag is not
+            in the allowed tags list.
 
     Returns:
-        int: 0 if the list command completed successfully, 1 otherwise.
+        list[FileEntry]: All matching entries, or an empty list if none are found.
     """
     try:
-        ls(filter_tag=args.filter_tag)
+        entries = ls(filter_tag=args.filter_tag)
+        
+        if not entries: 
+            print_message(msg = "No matching entries found.")
+            return 0
+
+        print_table(entries = entries)
         return 0
 
     except Exception as e:
-        print(f"Error listing files: {e}", file=sys.stderr)
+        print_error(f"Error listing files: {e}")
         return 1
 
 
 def show_command(args):
-    """Show metadata for a specific datashelf entry.
+    """Return metadata entries for a dataset identified by the lookup key.
+
+    Resolves the lookup key against stored metadata by checking dataset name first,
+    then hash prefix, then exact hash. Returns all matches found at the first
+    successful match level — if name matches exist they are returned without
+    checking hash matches.
 
     Args:
-        args: The arguments passed from the command line. It should contain:
-            - lookup_key (str): Dataset name, full hash, or hash prefix to inspect.
+        lookup_key (str): Dataset name, full hash, or unique hash prefix to look up 
+            in the metadata.
+
+    Raises:
+        ValueError: If no matching dataset is found for the lookup key.
+        RuntimeError: If an unexpected state is encountered during resolution.
 
     Returns:
-        int: 0 if matching metadata was displayed successfully, 1 otherwise.
+        list[FileEntry]: One or more matching metadata entries.
     """
     try:
-        show(lookup_key=args.lookup_key)
+        entries = show(lookup_key=args.lookup_key)
+        print_entry_detail(entries = entries)
         return 0
 
+    except ValueError as e:
+        print_error(str(e))
+        return 1
+    
     except Exception as e:
-        print(f"Error showing metadata: {e}", file=sys.stderr)
+        print_error(f"Unexpected error: {e}")
         return 1
 
 
 def checkout_command(args):
     """Copy a stored artifact from the datashelf to a user-specified destination.
 
+    Resolves the lookup key against stored metadata and copies the matching artifact
+    to the specified destination path. Renders a Rich table of matches if the lookup
+    key is ambiguous, and a success message with the destination path on completion.
+
     Args:
         args: The arguments passed from the command line. It should contain:
             - lookup_key (str): Dataset name, full hash, or unique hash prefix.
-            - dest (str): Destination file path to copy the artifact to.
+            - dest_path (str): Destination file path to copy the artifact to.
+                Must have a .parquet suffix and must not already exist.
+
+    Raises:
+        AmbiguousLookupError: If multiple matching datasets are found for the lookup
+            key. Handled internally — renders a table of matches and returns 1.
+        TypeError: If the destination path does not have a .parquet suffix.
+            Handled internally — prints error and returns 1.
+        FileExistsError: If a file already exists at the destination path.
+            Handled internally — prints error and returns 1.
 
     Returns:
         int: 0 if the checkout completed successfully, 1 otherwise.
     """
     try:
-        checkout(lookup_key=args.lookup_key, dest=args.dest)
+        dest_path = checkout(lookup_key = args.lookup_key, dest_path = args.dest_path)
+        print_success(msg = f"Checked out artifact to {dest_path}")
         return 0
-
-    except Exception as e:
-        print(f"Error checking out file: {e}", file=sys.stderr)
+    
+    except AmbiguousLookupError as e:
+        print_error(str(e))
+        print_table(e.matches)
+        print_message("Rerun with a more specific lookup key.")
         return 1
-
+    
+    except Exception as e:
+        print_error(str(e))
+        return 1
 
 def main():
     parser = argparse.ArgumentParser(description="Datashelf CLI")
@@ -200,7 +244,8 @@ def main():
     checkout_parser = subparsers.add_parser("checkout", 
                                             help="Copy a stored artifact from the datashelf to a user-specified destination.")
     checkout_parser.add_argument("lookup_key", type=str, help="Dataset name, full hash, or unique hash prefix.")
-    checkout_parser.add_argument("dest", type=str, help="Destination file path to copy the artifact to.")
+    checkout_parser.add_argument("dest_path", type=str, 
+                                 help="Destination file path to copy the artifact to. Should include file name and suffix.")
     checkout_parser.set_defaults(func=checkout_command)
 
     args = parser.parse_args()
