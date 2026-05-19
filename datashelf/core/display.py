@@ -23,12 +23,12 @@ def print_entry_detail(entries: list[FileEntry]):
         
     detail_table = Table(title = title)  
     
-    headers = [key for key, value in entries[0].items()]
+    headers = [key for key in entries[0].keys()]
     for header in headers:
         detail_table.add_column(header = header)
-        
+    
     for entry in entries:
-        detail_table.add_row(entry["file_hash"], entry["name"], entry["tag"], entry["message"], entry["stored_path"], entry["datetime_added"])
+        detail_table.add_row(*[str(entry[key]) if entry[key] is not None else "" for key in entry])
 
     _console.print(detail_table)
     
