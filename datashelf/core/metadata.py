@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from datetime import datetime
-from typing import TypedDict, Optional
+from typing import TypedDict, Optional, Any, Mapping
 from tempfile import NamedTemporaryFile
+import json
+
 
 
 class FileEntry(TypedDict):
@@ -14,6 +15,7 @@ class FileEntry(TypedDict):
     message: Optional[str]
     tag: Optional[str]
     datetime_added: str  # ISO 8601
+    datetime_modified: Optional[str]
 
 
 class Metadata(TypedDict):
@@ -44,9 +46,19 @@ def init_metadata(datashelf_path: Path):
     _atomic_write_json(path=Path(metadata_path), obj=metadata)
 
 
-def create_file_entry(
-    file_hash: str, name: str, stored_path: str, message: str, tag: str
-):
+def create_file_entry(file_hash: str, name: str, stored_path: str, message: str, tag: str) -> FileEntry:
+    """Creates a FileEntry object for given metadata.
+
+    Args:
+        file_hash (str): Data's hash.
+        name (str): Name assigned to the data.
+        stored_path (str): Path to the .parquet artifact of the data in .datashelf/ (relative to .datashelf/)
+        message (str): Message assigned to the data.
+        tag (str): Tag assigned to the data.
+
+    Returns:
+        FileEntry: A FileEntry object representing an entry for the data that will go into metadata.json
+    """
     file_entry: FileEntry = {
         "file_hash": file_hash,
         "name": name,
@@ -54,12 +66,13 @@ def create_file_entry(
         "message": message,
         "tag": tag,
         "datetime_added": get_current_timestamp(),
+        "datetime_modified": get_current_timestamp()
     }
 
     return file_entry
 
 
-def load_metadata(datashelf_path: Path) -> dict:
+def load_metadata(datashelf_path: Path) -> Metadata:
     """
     Reads `metadata.json` from datashelf_path / 'metadata.json'
     and returns the document as a dictionary with keys:
@@ -107,7 +120,7 @@ def get_current_timestamp() -> str:
     """
     return datetime.now().replace(microsecond=0).isoformat()
 
-def update_metadata(path: Path, obj: dict) -> None:
+def update_metadata(path: Path, obj: Metadata) -> None:
     """Thin public wrapper over _atomic_write_json().
     Potential to add further metadata validation into this function
     to simplify user-facing API.
@@ -142,7 +155,7 @@ def _atomic_write_text(path: Path, text: str) -> None:
     tmp.replace(path)
 
 
-def _atomic_write_json(path: Path, obj: dict) -> None:
+def _atomic_write_json(path: Path, obj: Mapping[str, Any]) -> None:
     """
     Atomically write json using _atomic_write_text
     by applying json.dumps to text arg.
