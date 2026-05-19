@@ -36,16 +36,16 @@ def validate_tags(tag: str, allowed_tags: list[str]):
         raise ValueError(f"Tag must be one of {', '.join(allowed_tags)}")
 
 
-def get_parquet_engine(datashelf_path: Path) -> Literal["pyarrow", "fastparquet"]:
+def get_parquet_engine(datashelf_path: Path) -> Literal["auto", "fastparquet"]:
     with open(datashelf_path / "config.yaml", "r") as config_file:
         content = yaml.safe_load(config_file)
 
     config = content["config"]
 
-    if config["parquet_engine"] not in ["pyarrow", "fastparquet"]:
+    if config["parquet_engine"] not in ["auto", "fastparquet"]:
         msg = (
             f"{config['parquet_engine']} is an invalid value for 'parquet_engine' in config.yaml file. "
-            "Please change to either 'pyarrow' or 'fastparquet'"
+            "Please change to either 'auto' or 'fastparquet'"
         )
         raise ValueError(msg)
 
