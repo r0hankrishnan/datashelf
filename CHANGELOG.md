@@ -5,24 +5,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ---
 
-## [Unreleased]
+## [0.2.0] - Unreleased (WIP)
 
 ### Added
 - Delete functions: `delete_dataset()`, `delete_collection()`, `delete_shelf()`
-- Save a CSV file directly by path without loading into a DataFrame first
 - Parent-child relationships via `derived_from` parameter on `save()`
 - Dataset diff: schema, row count, and summary statistic comparisons between two artifacts
 
 ### Changed
-- Extracted shared name/hash lookup logic into `core/lookup.py`
-- Exposed `write_metadata()` as a proper public function in `core/metadata.py`; `_atomic_write_json` remains private
-- Dropped underscore from `get_current_timestamp()` to reflect its cross-module use
-- Rich-formatted CLI output replacing plain `print()` calls
-- Tag filtering available via `--filter-tag` flag on `datashelf list`
+- Extracted shared name/hash lookup logic into `core/lookup.py` [*]
+- Exposed `update_metadata()` as a proper public function in `core/metadata.py`; `_atomic_write_json` remains private [*]
+- Dropped underscore from `get_current_timestamp()` to reflect its cross-module use [*]
+- Rich-formatted CLI output replacing plain `print()` calls [*]
+- Tag filtering available via `--filter-tag` flag on `datashelf list` [*]
 
 ### Fixed
 - Removed unused `config_hash` computation in `core/metadata.py`
 - Renamed test files (`test_init copy.py`, etc.) so pytest picks them up correctly
+- General code refactoring to improve readability and mutual exclusiveness
 
 ---
 
