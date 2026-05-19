@@ -17,18 +17,25 @@ from datashelf.core.metadata import (
     load_metadata,
     update_metadata,
     create_file_entry,
-    get_current_timestamp
+    get_current_timestamp,
 )
+
 
 # Define Error class for when on_duplicate = "error"
 class DuplicateError(Exception):
     pass
 
+
 # =============================================================
 # MAIN FUNCTION
 # =============================================================
-def save(data: pd.DataFrame | str | Path, name: str, message: str, tag: str, 
-         on_duplicate: Literal["skip", "error", "update"] = "skip") -> None:
+def save(
+    data: pd.DataFrame | str | Path,
+    name: str,
+    message: str,
+    tag: str,
+    on_duplicate: Literal["skip", "error", "update"] = "skip",
+) -> None:
     """Save data to the datashelf.
 
     Args:
@@ -40,24 +47,37 @@ def save(data: pd.DataFrame | str | Path, name: str, message: str, tag: str,
         skip, error, or update when a duplicate is found. Defaults to skip.
     """
     datashelf_path: Path = find_datashelf_path()
-    
-    _validate_tag(datashelf_path = datashelf_path, tag = tag)
-    
-    # Open a temporary directory for hash validation and metadata update processes
-    with TemporaryDirectory(dir = datashelf_path) as t_dir:
-        temp_data_path, data_hash = _hash_data(temp_dir = t_dir, datashelf_path = datashelf_path, data = data)
 
-        metadata: Metadata = load_metadata(datashelf_path = datashelf_path)
+    _validate_tag(datashelf_path=datashelf_path, tag=tag)
+
+    # Open a temporary directory for hash validation and metadata update processes
+    with TemporaryDirectory(dir=datashelf_path) as t_dir:
+        temp_data_path, data_hash = _hash_data(
+            temp_dir=t_dir, datashelf_path=datashelf_path, data=data
+        )
+
+        metadata: Metadata = load_metadata(datashelf_path=datashelf_path)
         metadata_path = datashelf_path / "metadata.json"
-        
-        duplicate_handled = _handle_duplicate(metadata = metadata, metadata_path = metadata_path, data_hash = data_hash,
-                                              name = name, message = message, tag = tag, on_duplicate = on_duplicate)
-        
+
+        duplicate_handled = _handle_duplicate(
+            metadata=metadata,
+            metadata_path=metadata_path,
+            data_hash=data_hash,
+            name=name,
+            message=message,
+            tag=tag,
+            on_duplicate=on_duplicate,
+        )
+
         # duplicate_handled = True means that the helper dealt with a duplicate file and we don't need to write anything
-        if duplicate_handled: 
-            return 
-        
-        stored_path = _store_artifact(datashelf_path = datashelf_path, temp_data_path = temp_data_path, data_hash = data_hash)
+        if duplicate_handled:
+            return
+
+        stored_path = _store_artifact(
+            datashelf_path=datashelf_path,
+            temp_data_path=temp_data_path,
+            data_hash=data_hash,
+        )
         data_file_entry = create_file_entry(
             file_hash=data_hash,
             name=name,
@@ -68,7 +88,7 @@ def save(data: pd.DataFrame | str | Path, name: str, message: str, tag: str,
         metadata["last_modified"] = get_current_timestamp()
         metadata["files"].append(data_file_entry)
 
-        update_metadata(path = metadata_path, obj = metadata)
+        update_metadata(path=metadata_path, obj=metadata)
 
 
 # =============================================================
@@ -76,7 +96,7 @@ def save(data: pd.DataFrame | str | Path, name: str, message: str, tag: str,
 # =============================================================
 def _validate_tag(datashelf_path: Path, tag: str):
     """Reads config file to see if tag validation is on.
-    If so, validates proposed tag and if tag is not in 
+    If so, validates proposed tag and if tag is not in
     allowed_tag, throws an error.
 
     Args:
@@ -87,18 +107,23 @@ def _validate_tag(datashelf_path: Path, tag: str):
         ValueError: Propogated from validate_tag() if tag not in allowed_tags.
     """
     tag_validation_enforced, allowed_tags = get_config_tags_settings(
-        datashelf_path = datashelf_path
+        datashelf_path=datashelf_path
     )
     if tag_validation_enforced:
-        validate_tags(tag = tag, allowed_tags = allowed_tags) # Raises ValueError if validation fails
+        validate_tags(
+            tag=tag, allowed_tags=allowed_tags
+        )  # Raises ValueError if validation fails
 
-def _hash_data(temp_dir: Path | str, datashelf_path: Path, data: pd.DataFrame | str | Path) -> tuple[Path, str]:
+
+def _hash_data(
+    temp_dir: Path | str, datashelf_path: Path, data: pd.DataFrame | str | Path
+) -> tuple[Path, str]:
     """Meant to run within TemporaryDirectory context manager.
-    Creates the temporary directory, creates the path for the 
+    Creates the temporary directory, creates the path for the
     normalized temporary parquet file, and hashes the temporary parquet file.
 
     Args:
-        temp_dir (Path | str): Path to temporary directory. 
+        temp_dir (Path | str): Path to temporary directory.
         datashelf_path (Path): Path to .datashelf/
         data (pd.DataFrame): Data user is trying to save (passed to save()).
 
@@ -112,12 +137,13 @@ def _hash_data(temp_dir: Path | str, datashelf_path: Path, data: pd.DataFrame | 
     engine = get_parquet_engine(datashelf_path=datashelf_path)
     make_temp_parquet(data=data, output_path=temp_data_path, engine=engine)
     data_hash = sha256_hex(data_path=temp_data_path)
-    
+
     return temp_data_path, data_hash
-    
+
+
 def _store_artifact(datashelf_path: Path, temp_data_path: Path, data_hash: str) -> str:
     """Stores the parquet file of the data being saved into an artifacts/ directory
-    in .datashelf/ by moving the parquet file from its temporary directory to 
+    in .datashelf/ by moving the parquet file from its temporary directory to
     the artifact directory.
 
     Args:
@@ -135,13 +161,21 @@ def _store_artifact(datashelf_path: Path, temp_data_path: Path, data_hash: str) 
     stored_path = f"artifacts/{data_hash}.parquet"
 
     shutil.move(str(temp_data_path), str(full_stored_path))
-    
+
     return stored_path
 
-def _handle_duplicate(metadata: Metadata, metadata_path: Path, data_hash: str, name: str, message: str, tag: str, 
-                       on_duplicate: Literal["skip", "error", "update"]) -> bool:
+
+def _handle_duplicate(
+    metadata: Metadata,
+    metadata_path: Path,
+    data_hash: str,
+    name: str,
+    message: str,
+    tag: str,
+    on_duplicate: Literal["skip", "error", "update"],
+) -> bool:
     """Handles logic for if a duplicate file already exists in metadata. Depending on value
-    of on_duplicate, the function either skips, errors out, or updates the duplicate file in 
+    of on_duplicate, the function either skips, errors out, or updates the duplicate file in
     the metadata.
 
     Args:
@@ -156,7 +190,7 @@ def _handle_duplicate(metadata: Metadata, metadata_path: Path, data_hash: str, n
 
     Raises:
         DuplicateError: Error raised if on_duplicate = 'error'. Explains what the current entry's metadata is
-        and prompts to rerun with either 'skip' or 'update'. 
+        and prompts to rerun with either 'skip' or 'update'.
 
     Returns:
         bool: True is a duplicate was updated (this means we don't need to store/move artifacts), False if no
@@ -168,7 +202,7 @@ def _handle_duplicate(metadata: Metadata, metadata_path: Path, data_hash: str, n
             match on_duplicate:
                 case "skip":
                     return True
-                
+
                 case "error":
                     err_msg = (
                         f"Data {name} already exists in .datashelf under "
@@ -177,7 +211,7 @@ def _handle_duplicate(metadata: Metadata, metadata_path: Path, data_hash: str, n
                         "call save() with on_duplicate set to 'update'."
                     )
                     raise DuplicateError(err_msg)
-                
+
                 case "update":
                     now = get_current_timestamp()
                     metadata["last_modified"] = now
@@ -186,8 +220,8 @@ def _handle_duplicate(metadata: Metadata, metadata_path: Path, data_hash: str, n
                     entry["tag"] = tag
                     entry["datetime_modified"] = now
 
-                    update_metadata(path= metadata_path, obj=metadata)
-                    
+                    update_metadata(path=metadata_path, obj=metadata)
+
                     return True
-    
+
     return False

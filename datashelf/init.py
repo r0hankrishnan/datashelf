@@ -12,7 +12,7 @@ def init(custom_path: str | None = None) -> tuple[bool, Path]:
 
     Raises:
         NotADirectoryError: If the specified path does not exist or is not a directory.
-        
+
     Returns:
         bool: True if new .datashelf directory was created, False if .datashelf directory already existed at datashelf_path.
         Path: The path at which datashelf was intialized.
@@ -24,21 +24,21 @@ def init(custom_path: str | None = None) -> tuple[bool, Path]:
             )
 
         datashelf_path: Path = Path(custom_path) / ".datashelf"
-        initialized = init_datashelf_directory(datashelf_path = datashelf_path)
+        initialized = init_datashelf_directory(datashelf_path=datashelf_path)
 
-        if initialized: # Initialize .datashelf at datashelf_path
+        if initialized:  # Initialize .datashelf at datashelf_path
             init_config(datashelf_path=datashelf_path)
             init_metadata(datashelf_path=datashelf_path)
-        
+
         return initialized, datashelf_path
 
     else:
         cwd: Path = Path().cwd()
         datashelf_path: Path = cwd / ".datashelf"
-        initialized = init_datashelf_directory(datashelf_path = datashelf_path)
+        initialized = init_datashelf_directory(datashelf_path=datashelf_path)
 
-        if initialized: # Initialize .datashelf at datashelf_path
+        if initialized:  # Initialize .datashelf at datashelf_path
             init_config(datashelf_path=datashelf_path)
             init_metadata(datashelf_path=datashelf_path)
-        
+
         return initialized, datashelf_path

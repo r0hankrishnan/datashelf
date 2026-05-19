@@ -3,6 +3,7 @@ from datashelf.core.metadata import load_metadata, FileEntry
 from datashelf.core.config import get_config_tags_settings, validate_tags
 from datashelf.core.lookup import find_matches
 
+
 # =============================================================
 # MAIN FUNCTIONS
 # =============================================================
@@ -30,8 +31,9 @@ def ls(filter_tag: list[str] | None = None) -> list[FileEntry]:
 
     if not entries:
         return []
-    
+
     return entries
+
 
 def show(lookup_key: str) -> list[FileEntry]:
     """Print detailed metadata information for a specific dataset identified by the lookup key.
@@ -47,21 +49,29 @@ def show(lookup_key: str) -> list[FileEntry]:
     """
     datashelf_path = find_datashelf_path()
     metadata = load_metadata(datashelf_path=datashelf_path)
-    
-    name_match, hash_approx_match, hash_exact_match = find_matches(lookup_key = lookup_key, metadata = metadata)
-    
-    if len(name_match) == 0 and len(hash_approx_match) == 0 and len(hash_exact_match) == 0:
-        raise ValueError(f"No match found for {lookup_key}. Use the `list` command to see available datasets in .datashelf/.")
-    
+
+    name_match, hash_approx_match, hash_exact_match = find_matches(
+        lookup_key=lookup_key, metadata=metadata
+    )
+
+    if (
+        len(name_match) == 0
+        and len(hash_approx_match) == 0
+        and len(hash_exact_match) == 0
+    ):
+        raise ValueError(
+            f"No match found for {lookup_key}. Use the `list` command to see available datasets in .datashelf/."
+        )
+
     if len(name_match) > 0:
         return name_match
-    
+
     if len(hash_approx_match) > 0:
         return hash_approx_match
-    
+
     if len(hash_exact_match) > 0:
         return hash_exact_match
-    
+
     raise RuntimeError(f"Unreachable state in `show()`.")
 
 

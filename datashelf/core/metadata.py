@@ -7,7 +7,6 @@ from tempfile import NamedTemporaryFile
 import json
 
 
-
 class FileEntry(TypedDict):
     file_hash: str
     name: str
@@ -46,7 +45,9 @@ def init_metadata(datashelf_path: Path):
     _atomic_write_json(path=Path(metadata_path), obj=metadata)
 
 
-def create_file_entry(file_hash: str, name: str, stored_path: str, message: str, tag: str) -> FileEntry:
+def create_file_entry(
+    file_hash: str, name: str, stored_path: str, message: str, tag: str
+) -> FileEntry:
     """Creates a FileEntry object for given metadata.
 
     Args:
@@ -66,7 +67,7 @@ def create_file_entry(file_hash: str, name: str, stored_path: str, message: str,
         "message": message,
         "tag": tag,
         "datetime_added": get_current_timestamp(),
-        "datetime_modified": get_current_timestamp()
+        "datetime_modified": get_current_timestamp(),
     }
 
     return file_entry
@@ -111,6 +112,7 @@ def load_metadata(datashelf_path: Path) -> Metadata:
 
     return metadata_json
 
+
 def get_current_timestamp() -> str:
     """
     Returns the current datetime in ISO 8601 format
@@ -119,6 +121,7 @@ def get_current_timestamp() -> str:
         str: Current datetime
     """
     return datetime.now().replace(microsecond=0).isoformat()
+
 
 def update_metadata(path: Path, obj: Metadata) -> None:
     """Thin public wrapper over _atomic_write_json().
@@ -129,12 +132,13 @@ def update_metadata(path: Path, obj: Metadata) -> None:
         path (Path): Path of metadata
         obj (dict): Dict of entry to append to metadata.
     """
-    _atomic_write_json(path = path, obj = obj)
+    _atomic_write_json(path=path, obj=obj)
 
 
 # =============================================================
 # HELPER FUNCTIONS
 # =============================================================
+
 
 def _atomic_write_text(path: Path, text: str) -> None:
     """

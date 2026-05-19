@@ -16,7 +16,7 @@ def checkout(lookup_key: str, dest_path: str | Path) -> Path:
     Returns:
         Path: The path to the copied artifact.
     """
-    src_path = load(lookup_key = lookup_key)
+    src_path = load(lookup_key=lookup_key)
 
     dest_path = Path(dest_path).resolve()
 

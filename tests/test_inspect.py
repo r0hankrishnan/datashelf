@@ -1,31 +1,40 @@
 from __future__ import annotations
 
+import pytest
 from datashelf.inspect import ls, show
 
 
-def test_ls_prints_saved_entry(saved_artifact, capsys):
-    ls()
-    captured = capsys.readouterr()
-
-    assert "people_raw" in captured.out
-    assert "raw" in captured.out
-    assert "tiny test dataset" in captured.out
-
-
-def test_ls_filter_tag_prints_matching_entries_only(saved_artifact, capsys):
-    ls(filter_tag=["raw"])
-    captured = capsys.readouterr()
-
-    assert "people_raw" in captured.out
-    assert "raw" in captured.out
+def test_ls_returns_saved_entry(saved_artifact):
+    entries = ls()
+    assert len(entries) == 1
+    assert entries[0]["name"] == "people_raw"
+    assert entries[0]["tag"] == "raw"
+    assert entries[0]["message"] == "tiny test dataset"
 
 
-def test_show_prints_full_metadata_entry(saved_artifact, capsys):
-    show("people_raw")
-    captured = capsys.readouterr()
+def test_ls_returns_empty_list_when_no_entries(initialized_repo):
+    entries = ls()
+    assert entries == []
 
-    assert "Hash" in captured.out
-    assert "Name" in captured.out
-    assert "Tag" in captured.out
-    assert "Stored at" in captured.out
-    assert "people_raw" in captured.out
+
+def test_ls_filter_tag_returns_matching_entries_only(saved_artifact):
+    entries = ls(filter_tag=["raw"])
+    assert len(entries) == 1
+    assert entries[0]["tag"] == "raw"
+
+
+def test_ls_filter_tag_returns_empty_for_no_matches(saved_artifact):
+    entries = ls(filter_tag=["processed"])
+    assert entries == []
+
+
+def test_show_returns_matching_entry(saved_artifact):
+    entries = show("people_raw")
+    assert len(entries) == 1
+    assert entries[0]["name"] == "people_raw"
+    assert entries[0]["tag"] == "raw"
+
+
+def test_show_raises_for_missing_key(saved_artifact):
+    with pytest.raises(ValueError):
+        show("does_not_exist")

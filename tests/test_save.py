@@ -57,11 +57,16 @@ def test_duplicate_save_with_same_tag_does_not_create_second_entry(
 
     assert len(metadata["files"]) == 1
 
-def test_duplicate_save_skips_by_default(
-    initialized_repo, sample_csv
-):
+
+def test_duplicate_save_skips_by_default(initialized_repo, sample_csv):
     save(data=sample_csv, name="people_raw", message="initial", tag="raw")
-    save(data=sample_csv, name="people_raw", message="initial", tag="processed", on_duplicate="skip")
+    save(
+        data=sample_csv,
+        name="people_raw",
+        message="initial",
+        tag="processed",
+        on_duplicate="skip",
+    )
 
     metadata_path = initialized_repo / ".datashelf" / "metadata.json"
     with metadata_path.open("r", encoding="utf-8") as f:
@@ -71,20 +76,28 @@ def test_duplicate_save_skips_by_default(
     assert metadata["files"][0]["tag"] == "raw"  # unchanged
 
 
-def test_duplicate_on_duplicate_error_raises(
-    initialized_repo, sample_csv
-):
+def test_duplicate_on_duplicate_error_raises(initialized_repo, sample_csv):
     save(data=sample_csv, name="people_raw", message="initial", tag="raw")
 
     with pytest.raises(DuplicateError):
-        save(data=sample_csv, name="people_raw", message="initial", tag="raw", on_duplicate="error")
+        save(
+            data=sample_csv,
+            name="people_raw",
+            message="initial",
+            tag="raw",
+            on_duplicate="error",
+        )
 
 
-def test_duplicate_on_duplicate_update_updates_metadata(
-    initialized_repo, sample_csv
-):
+def test_duplicate_on_duplicate_update_updates_metadata(initialized_repo, sample_csv):
     save(data=sample_csv, name="people_raw", message="initial", tag="raw")
-    save(data=sample_csv, name="people_cleaned", message="dropped nulls", tag="processed", on_duplicate="update")
+    save(
+        data=sample_csv,
+        name="people_cleaned",
+        message="dropped nulls",
+        tag="processed",
+        on_duplicate="update",
+    )
 
     metadata_path = initialized_repo / ".datashelf" / "metadata.json"
     with metadata_path.open("r", encoding="utf-8") as f:
