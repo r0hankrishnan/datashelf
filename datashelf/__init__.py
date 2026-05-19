@@ -1,8 +1,8 @@
-from .init import init
-from .save import save
-from .inspect import ls, show
-from .load import load
-from .checkout import checkout
+from datashelf.init import init
+from datashelf.save import save
+from datashelf.inspect import ls, show
+from datashelf.load import load
+from datashelf.checkout import checkout
 
 __version__ = "0.1.2"
 
