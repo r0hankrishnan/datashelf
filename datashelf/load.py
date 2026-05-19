@@ -40,7 +40,7 @@ def load(lookup_key: str, to_df: bool = False) -> Path | pd.DataFrame:
     
     name_match, hash_approx_match, hash_exact_match = find_matches(lookup_key = lookup_key, metadata = metadata)
     
-    entry = _resolve_entry(lookup_key = lookup_key, name_match = name_match, hash_approx_match = hash_approx_match, 
+    entry = _resolve_matches(lookup_key = lookup_key, name_match = name_match, hash_approx_match = hash_approx_match, 
                            hash_exact_match = hash_exact_match)
 
     engine = get_parquet_engine(datashelf_path=datashelf_path)
@@ -51,7 +51,7 @@ def load(lookup_key: str, to_df: bool = False) -> Path | pd.DataFrame:
 # =============================================================
 # HELPER FUNCTIONS
 # =============================================================
-def _resolve_entry(lookup_key: str, name_match: list[FileEntry], hash_approx_match: list[FileEntry], 
+def _resolve_matches(lookup_key: str, name_match: list[FileEntry], hash_approx_match: list[FileEntry], 
                    hash_exact_match: list[FileEntry]) -> FileEntry:
     """Resolves match lists returned by find_matches() into a single FileEntry.
 
