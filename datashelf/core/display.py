@@ -1,6 +1,6 @@
 from rich.console import Console
 from rich.table import Table
-from metadata import FileEntry
+from datashelf.core.metadata import FileEntry
 
 # Create console objects to be used across modules
 _console = Console(color_system = "auto")
