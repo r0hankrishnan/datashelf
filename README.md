@@ -2,7 +2,7 @@
 
 **Lightweight local dataset tracking for data science projects.**
 
-![datashelf logo](https://raw.githubusercontent.com/r0hankrishnan/datashelf/main/assets/DataShelf_logo.svg)
+![datashelf logo](https://raw.githubusercontent.com/r0hankrishnan/datashelf/main/assets/DataShelf_logo.png)
 
 Stop naming files `data_final_really_final.csv`. Datashelf stores tabular datasets as immutable artifacts and lets you retrieve them by name or hash — so your experiments stay reproducible without any heavy infrastructure.
 
